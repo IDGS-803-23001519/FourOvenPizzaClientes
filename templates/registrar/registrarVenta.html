@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Registro de Venta</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cafe: #38230F;
+            --oro: #F29F05;
+            --crema: #F2D1B3;
+            --oscuro: #1a0f06;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Lato', sans-serif;
+            color: #fff;
+            background-image: url('static/FourOven/FondosUtilizados/FondoPedidoPizza.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #5c3317;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(26, 10, 3, 0.45);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .modal {
+            position: relative;
+            z-index: 1;
+            background: rgba(242, 209, 179, 0.18);
+            border: 2.5px solid var(--oro);
+            border-radius: 18px;
+            padding: 36px 40px 32px;
+            width: 780px;
+            max-width: 98vw;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.55);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .titulo-placeholder {
+            display: block;
+            margin: 0 auto 6px;
+            max-width: 360px;
+            width: 100%;
+        }
+
+        .modal-subtitulo {
+            font-family: 'Lato', sans-serif;
+            font-size: 13px;
+            color: var(--crema);
+            letter-spacing: 1px;
+            opacity: 0.85;
+        }
+
+        .modal-body {
+            display: flex;
+            gap: 28px;
+            align-items: flex-start;
+        }
+
+        .col-izq {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .seccion-label {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--crema);
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .panel {
+            background: var(--cafe);
+            border-radius: 10px;
+            padding: 16px 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            font-size: 12.5px;
+            color: var(--crema);
+            font-weight: 700;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 7px 10px;
+            border-radius: 6px;
+            border: none;
+            background: #fff;
+            font-size: 13px;
+            color: #333;
+            outline: none;
+            font-family: 'Lato', sans-serif;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            box-shadow: 0 0 0 2px var(--oro);
+        }
+
+        .metodo-pago-titulo {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--crema);
+            margin-bottom: 8px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13.5px;
+            color: var(--crema);
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .radio-label input[type="radio"] {
+            accent-color: var(--oro);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .tarjeta-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon svg {
+            position: absolute;
+            left: 10px;
+            color: #888;
+            pointer-events: none;
+        }
+
+        .input-icon input {
+            padding-left: 36px;
+        }
+
+        .tarjeta-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tarjeta-row input {
+            flex: 1;
+            padding: 7px 10px;
+            border-radius: 6px;
+            border: none;
+            background: #fff;
+            font-size: 13px;
+            color: #333;
+            outline: none;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .col-der {
+            width: 380px;
+            flex-shrink: 0;
+        }
+
+        .ticket {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            background: transparent;
+        }
+
+        .ticket-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            transform: scale(1.1);
+        }
+
+        /* ESTILOS DEL TICKET */
+        #ticketData {
+            position: absolute;
+            top: 115px;
+            left: 95px;
+            right: 35px;
+            color: #2b1a0e;
+            font-family: 'Courier New', 'Monaco', monospace;
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        .ticket-fecha {
+            text-align: left;
+            font-size: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .ticket-item-row {
+            margin-bottom: 6px;
+        }
+
+        .ticket-item-name {
+            display: block;
+        }
+
+        .ticket-total-row {
+            margin-top: 55px;
+            padding-top: -10px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 10px 32px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            font-family: 'Lato', sans-serif;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        }
+
+        .btn-confirmar {
+            background: var(--crema);
+            color: var(--cafe);
+        }
+
+        .btn-cancelar {
+            background: var(--crema);
+            color: var(--cafe);
+        }
+
+        .tarjeta-fields {
+            display: none;
+        }
+
+        .tarjeta-fields.visible {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* ============================================ */
+        /* RESPONSIVE PARA TABLET (769px - 1024px) */
+        /* ============================================ */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .modal {
+                width: 90%;
+                max-width: 90vw;
+                padding: 30px 25px;
+            }
+
+            .modal-body {
+                gap: 20px;
+            }
+
+            .col-der {
+                width: 320px;
+            }
+
+            #ticketData {
+                top: 100px;
+                left: 75px;
+                right: 30px;
+                font-size: 8px;
+            }
+
+            .ticket-total-row {
+                margin-top: 55px;
+            }
+        }
+
+        /* ============================================ */
+        /* RESPONSIVE PARA MÓVIL (menos de 768px) */
+        /* ============================================ */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+                align-items: center;
+                min-height: 100vh;
+            }
+
+            .modal {
+                width: 100%;
+                max-width: 100%;
+                padding: 20px 16px;
+                margin: 0 auto;
+            }
+
+            .modal-header {
+                margin-bottom: 15px;
+            }
+
+            .titulo-placeholder {
+                max-width: 280px;
+            }
+
+            .modal-subtitulo {
+                font-size: 11px;
+            }
+
+            /* Apilar columnas en móvil */
+            .modal-body {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .col-izq {
+                width: 100%;
+            }
+
+            /* 🔥 OCULTAR EL TICKET COMPLETAMENTE EN MÓVIL 🔥 */
+            .col-der {
+                display: none;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .form-row .form-group {
+                width: 100%;
+            }
+
+            .panel {
+                padding: 12px 14px;
+            }
+
+            /* Botones en móvil */
+            .modal-footer {
+                gap: 12px;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                padding: 8px 20px;
+                font-size: 13px;
+                flex: 1;
+                text-align: center;
+            }
+
+            /* Campos de tarjeta en móvil */
+            .tarjeta-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .input-icon svg {
+                width: 14px;
+                height: 14px;
+            }
+
+            .input-icon input {
+                padding-left: 32px;
+                font-size: 12px;
+            }
+
+            /* Radio buttons más fáciles de tocar */
+            .radio-label {
+                font-size: 13px;
+                padding: 4px 0;
+            }
+
+            .radio-label input[type="radio"] {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        /* ============================================ */
+        /* MÓVIL PEQUEÑO (menos de 480px) */
+        /* ============================================ */
+        @media (max-width: 480px) {
+            .modal {
+                padding: 15px 12px;
+            }
+
+            .titulo-placeholder {
+                max-width: 220px;
+            }
+
+            .modal-subtitulo {
+                font-size: 10px;
+            }
+
+            .seccion-label,
+            .metodo-pago-titulo {
+                font-size: 12px;
+            }
+
+            label {
+                font-size: 11px;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            select {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .panel {
+                padding: 10px 12px;
+            }
+
+            .btn {
+                padding: 7px 16px;
+                font-size: 12px;
+            }
+
+            .radio-label {
+                font-size: 12px;
+            }
+        }
+
+        /* ============================================ */
+        /* MÓVIL MUY PEQUEÑO (menos de 380px) */
+        /* ============================================ */
+        @media (max-width: 380px) {
+            .modal {
+                padding: 12px 10px;
+            }
+
+            .titulo-placeholder {
+                max-width: 180px;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="modal">
+
+        <div class="modal-header">
+            <img src="static/FourOven/LetrasFourOvenPizza/LetrasRegistroVenta.png" alt="Registro de venta"
+                class="titulo-placeholder" style="display:block; margin:0 auto 6px; max-width:360px; width:100%;">
+            <p class="modal-subtitulo">Por favor confirme su compra</p>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="col-izq">
+                <p class="seccion-label">Ingrese sus datos:</p>
+                <div class="panel">
+                    <div class="form-group">
+                        <label for="nombreCliente">Nombre:</label>
+                        <input type="text" id="nombreCliente" name="nombreCliente" placeholder="">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="colonia">Colonia:</label>
+                            <input type="text" id="colonia" name="colonia" placeholder="">
+                        </div>
+                        <div class="form-group">
+                            <label for="calle">Calle:</label>
+                            <input type="text" id="calle" name="calle" placeholder="">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="numero">Número:</label>
+                            <input type="text" id="numero" name="numero" placeholder="">
+                        </div>
+                        <div class="form-group">
+                            <label for="cp">CP:</label>
+                            <input type="text" id="cp" name="cp" placeholder="">
+                        </div>
+                    </div>
+                </div>
+
+                <p class="metodo-pago-titulo">Método de pago:</p>
+                <div class="panel">
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="metodoPago" value="Efectivo" checked
+                                onchange="toggleTarjeta(false)">
+                            Efectivo
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="metodoPago" value="Pago en línea" onchange="toggleTarjeta(true)">
+                            Pago en línea
+                        </label>
+                    </div>
+
+                    <div class="tarjeta-fields" id="tarjetaFields">
+                        <div class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1H0V4zm0 3h16v5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V7z" />
+                            </svg>
+                            <input type="text" id="titularTarjeta" name="titularTarjeta"
+                                placeholder="Nombre del Titular">
+                        </div>
+                        <div class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1H0V4zm0 3h16v5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V7z" />
+                            </svg>
+                            <input type="text" id="numeroTarjeta" name="numeroTarjeta"
+                                placeholder="1234  5678  9012  3456" maxlength="19" oninput="formatCard(this)">
+                        </div>
+                        <div class="tarjeta-row">
+                            <input type="text" id="expiracion" name="expiracion" placeholder="MM / AA" maxlength="7"
+                                oninput="formatExp(this)">
+                            <input type="text" id="cvv" name="cvv" placeholder="CVV" maxlength="4">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-der">
+                <div class="ticket">
+                    <img src="static/FourOven/TicketFourOvenPizza/TicketFourOven.png" alt="Ticket de compra"
+                        class="ticket-img">
+                    <div id="ticketData"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-confirmar" onclick="confirmarVenta()">Confirmar venta</button>
+            <button class="btn btn-cancelar" onclick="cancelarVenta()">Cancelar</button>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleTarjeta(show) {
+            const tf = document.getElementById('tarjetaFields');
+            tf.classList.toggle('visible', show);
+        }
+
+        function formatCard(input) {
+            let v = input.value.replace(/\D/g, '').substring(0, 16);
+            input.value = v.replace(/(.{4})/g, '$1 ').trim();
+        }
+
+        function formatExp(input) {
+            let v = input.value.replace(/\D/g, '').substring(0, 4);
+            if (v.length >= 3) v = v.substring(0, 2) + ' / ' + v.substring(2);
+            input.value = v;
+        }
+
+        function confirmarVenta() {
+            alert('Venta confirmada');
+        }
+
+        function cancelarVenta() {
+            window.history.back();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const orden = JSON.parse(localStorage.getItem('orden')) || [];
+            const total = localStorage.getItem('total') || 0;
+
+            const ticketDiv = document.getElementById('ticketData');
+
+            // Si no hay datos en localStorage, usar los datos de ejemplo del ticket
+            let items = orden;
+            let totalFinal = total;
+
+            if (items.length === 0) {
+                // Datos de ejemplo
+                items = [
+                    { cantidad: 1, nombre: "4 Carnes", tamaño: "Chica", subtotal: 129 },
+                    { cantidad: 1, nombre: "4 Quesos", tamaño: "Chica", subtotal: 119 },
+                    { cantidad: 1, nombre: "Española", tamaño: "Mediana", subtotal: 169 }
+                ];
+                totalFinal = 417;
+            }
+
+            // Fecha y hora actual formateada
+            const now = new Date();
+            const dia = now.getDate();
+            const mes = now.getMonth() + 1;
+            const año = now.getFullYear();
+            let horas = now.getHours();
+            const minutos = now.getMinutes().toString().padStart(2, '0');
+            const ampm = horas >= 12 ? 'p.m.' : 'a.m.';
+            horas = horas % 12 || 12;
+            const fechaHora = `${dia}/${mes}/${año} ${horas}:${minutos} ${ampm}`;
+
+            // Construir el ticket
+            let itemsHtml = '';
+            items.forEach(item => {
+                const nombreCompleto = `${item.cantidad}x ${item.nombre} (${item.tamaño})`;
+                itemsHtml += `
+                    <div class="ticket-item-row">
+                        <span class="ticket-item-name">
+                            ${nombreCompleto} - $${item.subtotal}
+                        </span>
+                    </div>
+                `;
+            });
+
+            // HTML completo del ticket
+            const html = `
+                <div class="ticket-fecha">${fechaHora}</div>
+                ${itemsHtml}
+                <div class="ticket-total-row">
+                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ $${totalFinal}
+                </div>
+            `;
+
+            ticketDiv.innerHTML = html;
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,875 @@
+{% extends "layout.html" %}
+
+{% block container %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Four Oven Pizza</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Lato:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      overflow-x: hidden;
+      background-color: #0a0a0a;
+    }
+
+    #hero {
+      height: 100vh;
+      background: url('static/FourOven/FondosUtilizados/FondoPaginaCliente.png') no-repeat center center / cover;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-content {
+      margin-left: 15%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-logo {
+      width: 630px;
+      margin-left: -170px;
+    }
+
+    @media (max-width: 991px) {
+      #hero {
+        justify-content: center;
+      }
+
+      .hero-content {
+        margin-left: 0;
+        width: 90%;
+        text-align: center;
+      }
+
+      .hero-logo {
+        width: 90%;
+        max-width: 400px;
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .hero-logo {
+        max-width: 280px;
+      }
+    }
+
+    #entrega {
+      background: url('static/FourOven/FondosUtilizados/FondoCliente.png') no-repeat center top / cover;
+      position: relative;
+    }
+
+    .entrega-top {
+      background: transparent;
+      padding-top: 70px;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .entrega-top h2 {
+      font-family: 'Oswald', sans-serif;
+      color: #fff;
+      font-size: 1.8rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      margin-top: 60px;
+      text-align: center;
+      margin-left: 0;
+    }
+
+    .pasos-row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .paso {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 130px;
+      flex: 1 1 auto;
+    }
+
+    .paso-icon {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 10px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+    }
+
+    .paso-label {
+      font-family: 'Oswald', sans-serif;
+      color: #fff;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .paso-desc {
+      color: #bbb;
+      font-size: 0.7rem;
+      line-height: 1.4;
+    }
+
+    .entrega-lower {
+      background: transparent;
+      padding-bottom: 0;
+    }
+
+    .slogan-features-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 50px 40px 44px;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .slogan {
+      font-family: 'Oswald', sans-serif;
+      color: #38230F;
+      font-size: 2.5rem;
+      line-height: 1.1;
+      text-transform: uppercase;
+      font-weight: 900;
+      max-width: 650px;
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(90px, 130px));
+      gap: 20px 30px;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .feature-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-circle {
+      background: #E09A1A;
+      border-radius: 40px;
+      width: 100%;
+      max-width: 130px;
+      aspect-ratio: 130 / 110;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.22s, box-shadow 0.22s;
+    }
+
+    .feature-circle:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 28px rgba(224, 154, 26, 0.55);
+    }
+
+    .feature-icon {
+      width: 55%;
+      height: 55%;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+    }
+
+    .feature-label {
+      font-family: 'Oswald', sans-serif;
+      color: #38230F;
+      font-size: 0.6rem;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .pizzas-section {
+      padding: 0 20px 60px;
+    }
+
+    .pizzas-title {
+      font-family: 'Oswald', sans-serif;
+      color: #ffffff;
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 40px;
+      margin-bottom: 25px;
+      text-align: center;
+      margin-left: 0;
+    }
+
+    .pizzas-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .pizza-card {
+      background: #fff;
+      border-radius: 25px;
+      width: 180px;
+      padding: 25px 10px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      border: none;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .pizza-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .pizza-card-header {
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 85%;
+      text-align: center;
+      background: #38230F;
+      padding: 6px 0;
+      border-radius: 30px;
+      border: 2px solid #F29F05;
+    }
+
+    .pizza-card-name {
+      color: #fff;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+    }
+
+    .pizza-img {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+      margin-top: 10px;
+    }
+
+    #pizza-float {
+      position: relative;
+      height: 0;
+      z-index: 20;
+    }
+
+    .pizza {
+      position: absolute;
+      top: 0;
+      transform: translate(-50%, -50%);
+      width: 200px;
+      pointer-events: none;
+      filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.4));
+      animation: girar 20s linear infinite, flotar1 6s ease-in-out infinite;
+    }
+
+    .p1 {
+      left: 20%;
+      animation: girar 18s linear infinite, flotar1 6s ease-in-out infinite;
+    }
+
+    .p2 {
+      left: 40%;
+      animation: girar 22s linear infinite, flotar2 7s ease-in-out infinite;
+    }
+
+    .p3 {
+      left: 60%;
+      animation: girar 20s linear infinite, flotar1 5s ease-in-out infinite;
+    }
+
+    .p4 {
+      left: 80%;
+      animation: girar 25s linear infinite, flotar2 6s ease-in-out infinite;
+    }
+
+    @keyframes girar {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes flotar1 {
+
+      0%,
+      100% {
+        transform: translate(-50%, -50%) translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translate(-50%, -50%) translateY(-20px) rotate(180deg);
+      }
+    }
+
+    @keyframes flotar2 {
+
+      0%,
+      100% {
+        transform: translate(-50%, -50%) translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translate(-50%, -50%) translateY(-30px) rotate(-180deg);
+      }
+    }
+
+    #tercer-fondo {
+      background: url('static/FourOven/FondosUtilizados/FondoCompleto.png') no-repeat center center / cover;
+      padding: 80px 20px;
+      margin-bottom: 0;
+    }
+
+    .pizzas-final-title {
+      font-family: 'Oswald', sans-serif;
+      color: #fff;
+      font-size: 1.3rem;
+      margin-bottom: 30px;
+      text-align: center;
+      margin-left: 0;
+      margin-top: 0;
+    }
+
+    .pizzas-final-row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .final-contacto-title {
+      font-family: 'Oswald', sans-serif;
+      color: #fff;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      margin-left: 200px;
+      margin-top: 80px;
+    }
+
+    .contacto-box {
+      background: #eeeeee;
+      border-radius: 20px;
+      padding: 25px 30px;
+      margin: 40px auto 40px auto;
+      max-width: 1000px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      border: 3px solid #F29F05;
+    }
+
+    .contacto-info {
+      max-width: 320px;
+      color: #38230F;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .contacto-info h5 {
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #38230F;
+    }
+
+    .contacto-info p {
+      margin-bottom: 15px;
+    }
+
+    .contacto-info b {
+      display: block;
+      margin-bottom: 5px;
+      color: #38230F;
+    }
+
+  
+    .contacto-mapa {
+      width: 260px;
+      height: 150px;
+      background: #ccc;
+      border-radius: 12px;
+    }
+
+    .contacto-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn-contacto {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 30px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      width: 180px;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .btn-tel {
+      background: #e0524d;
+    }
+
+    .btn-wa {
+      background: #2ecc71;
+    }
+
+    .btn-contacto img {
+      width: 18px;
+    }
+
+    @media (max-width: 768px) {
+      .final-contacto-title {
+        margin-left: 0;
+        text-align: center;
+        font-size: 1.3rem;
+        margin-top: 40px;
+      }
+
+      .contacto-box {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 25px 20px;
+        max-width: 95%;
+        margin: 30px auto 0;
+      }
+
+      .contacto-info {
+        max-width: 100%;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .contacto-mapa {
+        width: 100%;
+        max-width: 300px;
+        height: 180px;
+        margin: 10px 0;
+      }
+
+      .contacto-botones {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        width: 100%;
+      }
+
+      .btn-contacto {
+        width: auto;
+        min-width: 150px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .contacto-botones {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-contacto {
+        width: 100%;
+        min-width: unset;
+      }
+    }
+
+    .footer-pro {
+      background: linear-gradient(135deg, #2b1608, #3b1f0d);
+      color: #fff;
+      padding: 60px 20px 20px;
+      margin-top: 0px;
+    }
+
+    .footer-container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+
+    .footer-col {
+      flex: 1;
+      min-width: 160px;
+      text-align: center;
+    }
+
+    .footer-col h4 {
+      font-family: 'Oswald', sans-serif;
+      margin-bottom: 15px;
+      color: #F29F05;
+      letter-spacing: 1px;
+    }
+
+    .footer-logo {
+      width: 100px;
+      margin-bottom: 10px;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 0.7rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero-logo {
+        max-width: 280px;
+      }
+
+      .slogan {
+        font-size: 1.8rem;
+      }
+
+      .features-grid {
+        gap: 15px;
+      }
+
+      .feature-circle {
+        max-width: 90px;
+      }
+
+      .feature-label {
+        font-size: 0.55rem;
+      }
+
+      .pizza-card {
+        width: 160px;
+      }
+
+      .pizza-img {
+        width: 130px;
+        height: 130px;
+      }
+
+      .contacto-box {
+        padding: 20px;
+        margin: 30px auto 50px auto;
+      }
+
+      .contacto-botones {
+        flex-direction: column;
+        width: 100%;
+        align-items: stretch;
+      }
+
+      .btn-contacto {
+        width: 100%;
+      }
+
+      #pizza-float {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .slogan {
+        font-size: 1.5rem;
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(3, 80px);
+        gap: 10px;
+      }
+
+      .feature-label {
+        font-size: 0.5rem;
+      }
+
+      .pizza-card {
+        width: 140px;
+      }
+
+      .pizza-img {
+        width: 110px;
+        height: 110px;
+      }
+
+      .pasos-row {
+        gap: 12px;
+      }
+
+      .paso {
+        max-width: 100px;
+      }
+
+      .paso-desc {
+        font-size: 0.6rem;
+      }
+    }
+
+@media (max-width: 768px) {
+  .entrega-top h2,
+  .paso-label,
+  .pizzas-title,
+  .pizzas-final-title,
+  .final-contacto-title,
+  .footer-pro p,
+  .footer-pro h4,
+  .footer-bottom,
+  .pizza-card-name {
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    -webkit-text-stroke: 0.8px #F29F05;
+    text-stroke: 0.8px #F29F05;
+    paint-order: stroke fill;
+  }
+  .entrega-top h2,
+  .pizzas-title,
+  .pizzas-final-title,
+  .final-contacto-title {
+    -webkit-text-stroke: 1.2px #F29F05;
+    text-stroke: 1.2px #F29F05;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .slogan {
+    text-shadow: none;
+    -webkit-text-stroke: 0;
+  }
+}
+  </style>
+</head>
+
+<body>
+
+  <section id="hero">
+    <div class="hero-content">
+      <img src="static/FourOven/LogoFourOvenPizzas/LogoBienvenido.png" class="hero-logo" alt="Four Oven Pizza">
+    </div>
+  </section>
+
+  <section id="pizza-float">
+    <img src="static/FourOven/LogoFourOvenPizzas/PizzaFondoCliente.png" class="pizza p1" alt="pizza flotante">
+    <img src="static/FourOven/LogoFourOvenPizzas/PizzaHawaianaLe.png" class="pizza p2" alt="pizza flotante">
+    <img src="static/FourOven/LogoFourOvenPizzas/Pizza3CarnesL.png" class="pizza p3" alt="pizza flotante">
+    <img src="static/FourOven/LogoFourOvenPizzas/PizzaPepperoniL.png" class="pizza p4" alt="pizza flotante">
+  </section>
+
+  <section id="entrega">
+    <div class="entrega-top">
+      <h2>Entrega:</h2>
+      <div class="pasos-row">
+        <div class="paso">
+          <img src="static/FourOven/Iconos/icono-orden.png" class="paso-icon" alt="Ordena">
+          <span class="paso-label">Ordena</span>
+          <p class="paso-desc">Elige tu pizza favorita y haz tu pedido en segundos.</p>
+        </div>
+        <div class="paso">
+          <img src="static/FourOven/Iconos/icono-paga.png" class="paso-icon" alt="Paga">
+          <span class="paso-label">Paga</span>
+          <p class="paso-desc">Paga de forma rápida y segura con tu método preferido.</p>
+        </div>
+        <div class="paso">
+          <img src="static/FourOven/Iconos/icono-envio.png" class="paso-icon" alt="Envío">
+          <span class="paso-label">Envío</span>
+          <p class="paso-desc">Preparamos tu pizza y la enviamos caliente hasta tu puerta.</p>
+        </div>
+        <div class="paso">
+          <img src="static/FourOven/Iconos/icono-paquete.png" class="paso-icon" alt="Paquete">
+          <span class="paso-label">Paquete</span>
+          <p class="paso-desc">Empacamos tu pedido con cuidado para que llegue perfecto.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="entrega-lower">
+      <div class="slogan-features-row">
+        <div class="slogan">
+          El verdadero sabor nace en<br>
+          nuestro horno
+        </div>
+        <div class="features-grid">
+          <div class="feature-item">
+            <div class="feature-circle">
+              <img src="static/FourOven/Iconos/icono_EntregaDom.png" class="feature-icon" alt="Entrega">
+            </div>
+            <span class="feature-label">Entrega a domicilio</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-circle">
+              <img src="static/FourOven/Iconos/icono-pedidoRapido.png" class="feature-icon" alt="Pedido rápido">
+            </div>
+            <span class="feature-label">Pedido rápido</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-circle">
+              <img src="static/FourOven/Iconos/icono-presentacion.png" class="feature-icon" alt="Presentación">
+            </div>
+            <span class="feature-label">Excelente presentación</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-circle">
+              <img src="static/FourOven/Iconos/icono_saborIrresistible.png" class="feature-icon" alt="Sabor">
+            </div>
+            <span class="feature-label">Sabor irresistible</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-circle">
+              <img src="static/FourOven/Iconos/icono-ingredientesFrescos.png" class="feature-icon" alt="Ingredientes">
+            </div>
+            <span class="feature-label">Ingredientes frescos</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-circle">
+              <img src="static/FourOven/Iconos/icono-recienhorneado.png" class="feature-icon" alt="Horneado">
+            </div>
+            <span class="feature-label">Recién horneado</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pizzas-section">
+        <p class="pizzas-title">Nuestras pizzas mas vendidas:</p>
+        <div class="pizzas-row">
+          <div class="pizza-card">
+            <div class="pizza-card-header"><span class="pizza-card-name">Pepperoni</span></div>
+            <img src="static/FourOven/Pizzas/PizzaPepperoni.png" class="pizza-img" alt="Pepperoni">
+          </div>
+          <div class="pizza-card">
+            <div class="pizza-card-header"><span class="pizza-card-name">Hawaiana</span></div>
+            <img src="static/FourOven/Pizzas/PizzaHawaiana.png" class="pizza-img" alt="Hawaiana">
+          </div>
+          <div class="pizza-card">
+            <div class="pizza-card-header"><span class="pizza-card-name">3 Carnes</span></div>
+            <img src="static/FourOven/Pizzas/Pizza3Carnes.png" class="pizza-img" alt="3 Carnes">
+          </div>
+          <div class="pizza-card">
+            <div class="pizza-card-header"><span class="pizza-card-name">4 Carnes</span></div>
+            <img src="static/FourOven/Pizzas/Pizza4Carnes.png" class="pizza-img" alt="4 Carnes">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tercer-fondo">
+    <h2 class="pizzas-final-title">DIRECTO DEL HORNO A TU MESA:</h2>
+    <div class="pizzas-final-row">
+      <div class="pizza-card">
+        <div class="pizza-card-header"><span class="pizza-card-name">Mexicana</span></div>
+        <img src="static/FourOven/Pizzas/PizzaMexicana.png" class="pizza-img" alt="Mexicana">
+      </div>
+      <div class="pizza-card">
+        <div class="pizza-card-header"><span class="pizza-card-name">Fogatta</span></div>
+        <img src="static/FourOven/Pizzas/PizzaFogatta.png" class="pizza-img" alt="Fogatta">
+      </div>
+      <div class="pizza-card">
+        <div class="pizza-card-header"><span class="pizza-card-name">4 Quesos</span></div>
+        <img src="static/FourOven/Pizzas/Pizza4Quesos.png" class="pizza-img" alt="4 Quesos">
+      </div>
+      <div class="pizza-card">
+        <div class="pizza-card-header"><span class="pizza-card-name">Española</span></div>
+        <img src="static/FourOven/Pizzas/PizzaEspañola.png" class="pizza-img" alt="Española">
+      </div>
+    </div>
+
+    <h2 class="final-contacto-title">CONTACTANOS:</h2>
+
+    <div class="contacto-box">
+
+      <div class="contacto-info">
+        <h5>SUCURSAL PLAZA MAYOR</h5>
+
+        <p>
+          <b>HORARIO DE ATENCIÓN:</b>
+          Lunes - Sábado: 1:00 pm a 10:30 pm<br>
+          Domingo: 1:00 pm a 9:00 pm
+        </p>
+
+      </div>
+
+      <div class="contacto-mapa">
+        <iframe src="https://www.google.com/maps?q=Blvd.+Juan+Alonso+de+Torres+2002+León+Guanajuato&output=embed"
+          width="100%" height="100%" style="border:0; border-radius:12px;" allowfullscreen="" loading="lazy">
+        </iframe>
+      </div>
+
+      <div class="contacto-botones">
+
+        <a href="tel:+524794035358" class="btn-contacto btn-tel">
+          <img src="static/FourOven/Iconos/icono-telefono.png">
+          479-403-5358
+        </a>
+
+        <a href="https://wa.me/524794035358?text=Hola%20quiero%20hacer%20un%20pedido" target="_blank"
+          class="btn-contacto btn-wa">
+          <img src="static/FourOven/Iconos/icono-whatsapp.png">
+          WhatsApp
+        </a>
+
+      </div>
+
+    </div>
+
+    <footer class="footer-pro">
+      <div class="footer-container">
+        <div class="footer-col logo-col">
+          <img src="static/FourOven/LogoFourOvenPizzas/pizza.png" class="footer-logo" alt="Logo">
+          <p>El verdadero sabor nace en nuestro horno 🔥</p>
+        </div>
+        <div class="footer-col">
+          <h4>Ubicación</h4>
+          <p>Blvd. Juan Alonso de Torres 2002</p>
+          <p>León, Guanajuato</p>
+        </div>
+        <div class="footer-col">
+          <h4>Contacto</h4>
+          <p>Tel: 479-403-5358</p>
+          <p>WhatsApp disponible</p>
+        </div>
+        <div class="footer-col">
+          <h4>Horario</h4>
+          <p>Lun - Sáb: 1:00 pm - 10:30 pm</p>
+          <p>Dom: 1:00 pm - 9:00 pm</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © 2026 Four Oven Pizza - Todos los derechos reservados
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+</body>
+
+</html>
+
+{% endblock %}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Four Oven Pizza</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    height:100vh;
+    font-family:'Segoe UI', sans-serif;
+    background: url('static/FourOven/FondosUtilizados/FondoInicial.png') no-repeat center center;
+    background-size: cover;
+    display:flex;
+    align-items:center;
+}
+
+.content{
+    margin-left:15%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+ 
+.logo{
+    width:350px;
+    margin-bottom:-10px;
+}
+
+.btn{
+    display:inline-block;
+    background:#F2D1B3;
+    border:2px solid #F29F05;
+    padding:12px 30px;
+    border-radius:50px;
+    font-size:16px;
+    font-weight:bold;
+    color:#4a2a12;
+    text-decoration:none;
+    transition:0.3s;
+    opacity:0.55;
+}
+
+.btn:hover{
+    background:#fadcb8;
+    transform:translateY(-3px);
+}
+
+@media(max-width:768px){
+    body{
+        justify-content:center;
+        text-align:center;
+    }
+
+    .content{
+        margin-left:0;
+    }
+
+    .logo{
+        width:180px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="content">
+
+    <img src="static/FourOven/LogoFourOvenPizzas/pizza.png" class="logo" alt="logo">
+    <a href="{{ url_for('inicio') }}" class="btn">
+        ORDENAR AHORA
+    </a>
+
+</div>
+
+</body>
+</html>

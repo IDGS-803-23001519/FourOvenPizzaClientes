@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layout Pizza</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+.nav-container{
+    position:fixed;
+    top:30px;
+    right:40px; 
+    z-index:1000;
+}
+
+.nav{
+    display:flex;
+    align-items:center;
+    gap:25px;
+    background:white;
+    padding:10px 40px;
+    border-radius:50px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+}
+
+.nav a {
+    position: relative;
+    text-decoration: none;
+    color: #4a2a12;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: 0.5px; 
+}
+
+.nav .btn{
+    background:#f29f05;
+    color:#38230F;
+    padding:10px 10px;
+    border-radius:30px;
+    font-weight: 900;
+}
+
+.nav a.active::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    bottom: -5px;
+    width: calc(100% - 10px);
+    height: 5px;
+    background: #f29f05;
+    border-radius: 2px;
+}
+
+.nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0%;
+    height: 3px;
+    background: #f29f05;
+    transition: 0.3s;
+}
+.nav a:first-child {
+    margin-left: 35px;
+}
+
+.nav a:hover{
+    opacity:0.7;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="nav-container">
+    <div class="nav">
+        <a href="{{ url_for('inicio') }}" 
+   class="{% if request.endpoint == 'inicio' %}active{% endif %}">
+   INICIO
+</a>
+        <a href="{{ url_for('ordenar') }}" class="btn">ORDENA AQUI</a>
+
+    </div>
+</div>
+
+{% block container %}
+{% endblock %}
+
+</body>
+</html>
