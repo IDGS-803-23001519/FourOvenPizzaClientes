@@ -68,7 +68,7 @@
         }
 
         .menu-bg {
-            background-image: url('static/FourOven/FondosUtilizados/FondoPedidoPizza.png');
+            background-image: url('/static/FourOven/FondosUtilizados/FondoPedidoPizza.png');
             background-size: cover;
             background-position: center;
             background-color: var(--brown-mid);
@@ -665,7 +665,7 @@
 
     <div class="menu-bg">
         <div class="menu-header">
-            <img src="static/FourOven/LetrasFourOvenPizza/LetraMenú.png" alt="Menú">
+            <img src="/static/FourOven/LetrasFourOvenPizza/LetraMenú.png" alt="Menú">
             <h2 class="menu-subtitle">Nuestras deliciosas pizzas</h2>
         </div>
 
@@ -681,7 +681,7 @@
 
     <div class="order-panel">
         <div class="panel-logo">
-            <img src="static/FourOven/LogoFourOvenPizzas/LogoPedidoPizza.png" alt="Four Oven Pedido">
+            <img src="/static/FourOven/LogoFourOvenPizzas/LogoPedidoPizza.png" alt="Four Oven Pedido">
         </div>
         <h2 class="miorden-subtitle">Mi orden</h2>
         <div class="order-items" id="orderItems">
@@ -700,16 +700,16 @@
         let allProducts = productosDB;
         
         const imagenPorNombre = {
-            "Pepperoni": "static/FourOven/Pizzas/PizzaPepperoni.png",
-            "Hawaiana": "static/FourOven/Pizzas/PizzaHawaiana.png",
-            "3 Carnes": "static/FourOven/Pizzas/Pizza3Carnes.png",
-            "4 Carnes": "static/FourOven/Pizzas/Pizza4Carnes.png",
-            "Mexicana": "static/FourOven/Pizzas/PizzaMexicana.png",
-            "Fogatta": "static/FourOven/Pizzas/PizzaFogatta.png",
-            "4 Quesos": "static/FourOven/Pizzas/Pizza4Quesos.png",
-            "Suprema": "static/FourOven/Pizzas/PizzaSuprema.png",
-            "Española": "static/FourOven/Pizzas/PizzaEspañola.png",
-            "Vegetariana": "static/FourOven/Pizzas/PizzaVegetariana.png"
+            "Pepperoni": "/static/FourOven/Pizzas/PizzaPepperoni.png",
+            "Hawaiana": "/static/FourOven/Pizzas/PizzaHawaiana.png",
+            "3 Carnes": "/static/FourOven/Pizzas/Pizza3Carnes.png",
+            "4 Carnes": "/static/FourOven/Pizzas/Pizza4Carnes.png",
+            "Mexicana": "/static/FourOven/Pizzas/PizzaMexicana.png",
+            "Fogatta": "/static/FourOven/Pizzas/PizzaFogatta.png",
+            "4 Quesos": "/static/FourOven/Pizzas/Pizza4Quesos.png",
+            "Suprema": "/static/FourOven/Pizzas/PizzaSuprema.png",
+            "Española": "/static/FourOven/Pizzas/PizzaEspañola.png",
+            "Vegetariana": "/static/FourOven/Pizzas/PizzaVegetariana.png"
         };
 
         const ingredientesPorNombre = {
@@ -750,14 +750,14 @@
                 <div class="pizza-card" onclick="addToOrder(${p.idProducto})">
                     <h3>${p.nombre} (${p.tamaño})</h3>
                     <div class="pizza-img-wrap">
-                        <img src="${imagenPorNombre[p.nombre] || 'static/FourOven/Pizzas/PizzaDefault.png'}" 
+                        <img src="${imagenPorNombre[p.nombre] || '/static/FourOven/Pizzas/PizzaDefault.png'}" 
                              alt="${p.nombre}"
                              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="pizza-img-placeholder" style="display:none;">🍕 ${p.nombre}</div>
                     </div>
                     <p class="ingredients">${ingredientesPorNombre[p.nombre] || "Deliciosa pizza artesanal"}</p>
                     <button class="btn-add" onclick="event.stopPropagation();addToOrder(${p.idProducto})">
-                        <img src="static/FourOven/Iconos/icono-agregar.png" class="icon-plus" alt="Agregar"> 
+                        <img src="/static/FourOven/Iconos/icono-agregar.png" class="icon-plus" alt="Agregar"> 
                         $${p.precio}
                     </button>
                 </div>
@@ -818,7 +818,7 @@
                 return `
                     <div class="order-item">
                         <div class="order-item-img">
-                            <img src="${imagenPorNombre[product.nombre] || 'static/FourOven/Pizzas/PizzaDefault.png'}" 
+                            <img src="${imagenPorNombre[product.nombre] || '/static/FourOven/Pizzas/PizzaDefault.png'}" 
                                  alt="${product.nombre}"
                                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                             <div class="mini-placeholder" style="display:none;">${product.nombre}</div>
