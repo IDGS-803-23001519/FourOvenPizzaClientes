@@ -1,19 +1,20 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask import flash
+from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
 from config import DevelopmentConfig
-from models import db  
-from ordenar import ordenar
+from models import db
+from ventas_online.routes import ventas_online
 
-app = Flask(__name__)  
+app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
+db.init_app(app)
 
-db.init_app(app)  
+csrf = CSRFProtect()
+csrf.init_app(app)
 
-csrf = CSRFProtect() 
-csrf.init_app(app)  
-
-app.register_blueprint(ordenar)
+# IMPORTANTE: url_prefix='/tienda' + eximir rutas AJAX del CSRF
+app.register_blueprint(ventas_online, url_prefix='/tienda')
+csrf.exempt(ventas_online)   # todas las rutas del blueprint están protegidas
+                              # por validación propia; el CSRF lo maneja el JS
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -26,14 +27,6 @@ def index():
 @app.route('/inicio')
 def inicio():
     return render_template('Inicio/inicio.html')
-
-@app.route('/ordenar')
-def ordenar():
-    return render_template('ordenar/ordenarAhora.html')
-
-@app.route('/registrar')
-def registrar():
-     return render_template('registrar/registrarVenta.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Auto-refresh cada 30s para actualizar estado sin AJAX -->
+  <meta http-equiv="refresh" content="30">
+  <title>Seguimiento de Pedido - Four Oven</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--cafe:#38230F;--oro:#F29F05;--crema:#F2D1B3;--verde:#27ae60;--rojo:#e74c3c;--azul:#3b82f6;}
+    body{min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Lato',sans-serif;background-image:url('/static/FourOven/FondosUtilizados/FondoPedidoPizza.png');background-size:cover;background-position:center;background-color:#5c3317;padding:20px;}
+    body::before{content:'';position:fixed;inset:0;background:rgba(26,10,3,.5);pointer-events:none;z-index:0;}
+
+    .card{position:relative;z-index:1;background:rgba(242,209,179,.18);border:2.5px solid var(--oro);border-radius:18px;padding:40px 36px;width:540px;max-width:98vw;backdrop-filter:blur(6px);box-shadow:0 8px 40px rgba(0,0,0,.55);text-align:center;color:#fff;}
+
+    .seg-logo{max-height:70px;margin-bottom:16px;}
+    .seg-titulo{font-family:'Cinzel',serif;font-size:1.5rem;color:var(--oro);margin-bottom:4px;}
+    .seg-num{font-size:.85rem;color:var(--crema);opacity:.75;margin-bottom:24px;}
+
+    /* Banner de domicilio */
+    .banner-domicilio{background:rgba(39,174,96,.15);border:1.5px solid var(--verde);border-radius:12px;padding:14px 18px;margin-bottom:24px;font-size:.9rem;color:#a7f3d0;line-height:1.6;}
+    .banner-domicilio .domicilio-icon{font-size:2rem;display:block;margin-bottom:6px;}
+    .banner-domicilio strong{color:#6ee7b7;}
+
+    /* Estado */
+    .estado-wrap{margin-bottom:24px;}
+    .estado-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:40px;font-size:1rem;font-weight:800;}
+    .en-proceso{background:rgba(37,99,235,.15);border:2px solid var(--azul);color:#93c5fd;}
+    .lista{background:rgba(245,158,11,.15);border:2px solid var(--oro);color:var(--oro);}
+    .confirmada{background:rgba(39,174,96,.15);border:2px solid var(--verde);color:#6ee7b7;}
+    .cancelada{background:rgba(231,76,60,.15);border:2px solid var(--rojo);color:#fca5a5;}
+    .dot-pulse{width:10px;height:10px;border-radius:50%;}
+    .en-proceso .dot-pulse{background:var(--azul);animation:pulse 1.4s infinite;}
+    .lista .dot-pulse{background:var(--oro);animation:pulse 1.4s infinite;}
+    .confirmada .dot-pulse{background:var(--verde);}
+    .cancelada .dot-pulse{background:var(--rojo);}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.8);}}
+    .estado-desc{font-size:.85rem;color:var(--crema);opacity:.8;margin-top:10px;line-height:1.6;}
+
+    /* Pasos */
+    .pasos{display:flex;justify-content:center;margin-bottom:22px;}
+    .paso{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+    .paso:not(:last-child)::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:2px;background:rgba(255,255,255,.15);z-index:0;}
+    .paso.activo::after,.paso.hecho::after{background:var(--oro);}
+    .paso-icono{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:.85rem;z-index:1;position:relative;}
+    .paso.activo .paso-icono{border-color:var(--oro);background:rgba(242,159,5,.2);animation:pulse 1.4s infinite;}
+    .paso.hecho .paso-icono{border-color:var(--verde);background:rgba(39,174,96,.2);}
+    .paso-label{font-size:.65rem;color:var(--crema);opacity:.6;margin-top:5px;text-align:center;}
+    .paso.activo .paso-label,.paso.hecho .paso-label{opacity:1;}
+
+    /* Resumen */
+    .resumen{background:rgba(0,0,0,.2);border-radius:10px;padding:14px;text-align:left;margin-bottom:20px;}
+    .item-row{display:flex;justify-content:space-between;font-size:12px;color:var(--crema);padding:3px 0;opacity:.85;}
+    .item-row.total-row{border-top:1px solid rgba(255,255,255,.1);margin-top:6px;padding-top:8px;font-weight:800;color:var(--oro);font-size:14px;opacity:1;}
+
+    /* Refresh note */
+    .refresh-note{font-size:.7rem;color:var(--crema);opacity:.5;margin-bottom:14px;}
+    .btn-volver{display:inline-block;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);color:#fff;padding:10px 28px;border-radius:25px;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;}
+    .btn-volver:hover{background:rgba(255,255,255,.2);color:#fff;}
+
+    @media(max-width:480px){.card{padding:24px 16px;}}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="/static/FourOven/LogoFourOvenPizzas/LogoPedidoPizza.png" class="seg-logo" alt="Four Oven">
+    <h2 class="seg-titulo">¡Pedido recibido!</h2>
+    <p class="seg-num">Pedido #{{ venta.idVenta }}</p>
+
+    <!-- Banner de entrega a domicilio -->
+    <div class="banner-domicilio">
+      <span class="domicilio-icon">🛵</span>
+      <strong>Entrega a domicilio</strong><br>
+      Tu pedido será preparado y enviado a tu dirección.<br>
+      Nuestro repartidor se pondrá en contacto contigo.
+    </div>
+
+    <!-- Estado actual -->
+    {% set estado = venta.estado %}
+    <div class="estado-wrap">
+      {% if estado == 'En proceso' %}
+        <div class="estado-badge en-proceso">
+          <span class="dot-pulse"></span>
+          <span>Preparando tu pedido 🍳</span>
+        </div>
+        <p class="estado-desc">Nuestros cocineros están en ello. ¡Muy pronto estará listo para enviar!</p>
+      {% elif estado == 'Lista para entregar' %}
+        <div class="estado-badge lista">
+          <span class="dot-pulse"></span>
+          <span>¡Listo para enviar! 🎉</span>
+        </div>
+        <p class="estado-desc">Tu pedido está listo. Nuestro repartidor saldrá en breve.</p>
+      {% elif estado == 'Confirmada' %}
+        <div class="estado-badge confirmada">
+          <span class="dot-pulse"></span>
+          <span>Pedido en camino ✅</span>
+        </div>
+        <p class="estado-desc">¡Tu pedido está en camino! Disfruta tu pizza.</p>
+      {% elif estado == 'Cancelada' %}
+        <div class="estado-badge cancelada">
+          <span class="dot-pulse"></span>
+          <span>Pedido cancelado ❌</span>
+        </div>
+        <p class="estado-desc">Tu pedido fue cancelado. Si es un error, comunícate con nosotros.</p>
+      {% else %}
+        <div class="estado-badge en-proceso">
+          <span class="dot-pulse"></span>
+          <span>{{ estado }}</span>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Pasos -->
+    <div class="pasos">
+      {% set paso_recibido  = 'hecho' %}
+      {% if estado == 'En proceso' %}
+        {% set paso_prep = 'activo' %}{% set paso_envio = '' %}{% set paso_entregado = '' %}
+      {% elif estado == 'Lista para entregar' %}
+        {% set paso_prep = 'hecho' %}{% set paso_envio = 'activo' %}{% set paso_entregado = '' %}
+      {% elif estado == 'Confirmada' %}
+        {% set paso_prep = 'hecho' %}{% set paso_envio = 'hecho' %}{% set paso_entregado = 'hecho' %}
+      {% elif estado == 'Cancelada' %}
+        {% set paso_prep = '' %}{% set paso_envio = '' %}{% set paso_entregado = '' %}
+      {% else %}
+        {% set paso_prep = 'activo' %}{% set paso_envio = '' %}{% set paso_entregado = '' %}
+      {% endif %}
+
+      <div class="paso {{ paso_recibido }}">
+        <div class="paso-icono">📋</div>
+        <div class="paso-label">Recibido</div>
+      </div>
+      <div class="paso {{ paso_prep }}">
+        <div class="paso-icono">🍳</div>
+        <div class="paso-label">Preparando</div>
+      </div>
+      <div class="paso {{ paso_envio }}">
+        <div class="paso-icono">🛵</div>
+        <div class="paso-label">En camino</div>
+      </div>
+      <div class="paso {{ paso_entregado }}">
+        <div class="paso-icono">🤝</div>
+        <div class="paso-label">Entregado</div>
+      </div>
+    </div>
+
+    <!-- Resumen del pedido -->
+    <div class="resumen">
+      {% for d in detalle %}
+      <div class="item-row">
+        <span>{{ d.cantidad }}x {{ d.nombre_producto }} ({{ d.tamano }})</span>
+        <span>${{ "%.2f"|format(d.subtotal) }}</span>
+      </div>
+      {% endfor %}
+      <div class="item-row total-row">
+        <span>Total</span>
+        <span>${{ "%.2f"|format(total) }}</span>
+      </div>
+    </div>
+
+    <p class="refresh-note">🔄 Esta página se actualiza automáticamente cada 30 segundos.</p>
+    <a href="{{ url_for('ventas_online.menu') }}" class="btn-volver">← Hacer otro pedido</a>
+  </div>
+</body>
+</html>
