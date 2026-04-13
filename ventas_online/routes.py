@@ -46,13 +46,35 @@ def _get_tamano(prod):
 
 
 def _imagen_b64(imagen_blob):
-    """Convierte BLOB de imagen a cadena base64 para usar en <img src>."""
+    """Convierte imagen de BD a string base64 para usar en <img src>.
+    Maneja tanto bytes como strings base64 con data URI."""
     if not imagen_blob:
         return None
     try:
-        img_bytes = bytes(imagen_blob)
-        return "data:image/png;base64," + base64.b64encode(img_bytes).decode()
-    except Exception:
+        # Si ya es un string (posiblemente data URI)
+        if isinstance(imagen_blob, str):
+            # Si ya tiene el prefijo data:image, devolverlo directamente
+            if imagen_blob.startswith('data:image'):
+                return imagen_blob
+            # Si es solo base64 sin prefijo, agregarlo
+            return "data:image/png;base64," + imagen_blob
+        
+        # Si es bytes, convertirlo
+        if isinstance(imagen_blob, bytes):
+            # Primero intentar decodificar como string (podría ser base64 almacenado como texto)
+            try:
+                decoded = imagen_blob.decode('utf-8')
+                if decoded.startswith('data:image'):
+                    return decoded
+                if decoded and not decoded.startswith('data:'):
+                    return "data:image/png;base64," + decoded
+            except UnicodeDecodeError:
+                # No es texto, es binario crudo
+                return "data:image/png;base64," + base64.b64encode(imagen_blob).decode()
+        
+        return None
+    except Exception as e:
+        print(f"Error convirtiendo imagen: {e}")
         return None
 
 
@@ -276,6 +298,11 @@ def menu():
         session.pop("reserva_temp_expira", None)
 
     productos = _productos_menu()
+
+    for p in productos:
+        print(f"Producto: {p['nombre']}, tiene imagen_b64: {bool(p.get('imagen_b64'))}")
+        if p.get('imagen_b64'):
+            print(f"  Primeros 100 chars: {p['imagen_b64'][:100]}")
 
     # Carrito guardado en sesión
     carrito_raw = session.get("carrito_online", "[]")
