@@ -7,28 +7,35 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
-    :root{--cafe:#38230F;--oro:#F29F05;--crema:#F2D1B3;--oscuro:#1a0f06;--verde:#27ae60;--rojo:#e74c3c;}
+    :root{--cafe:#38230F;--oro:#F29F05;--crema:#F2D1B3;--oscuro:#1a0f06;--verde:#27ae60;--rojo:#e74c3c;--azul:#2563eb;}
     body{min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Lato',sans-serif;color:#fff;background-image:url('/static/FourOven/FondosUtilizados/FondoPedidoPizza.png');background-size:cover;background-position:center;background-color:#5c3317;padding:20px;}
     body::before{content:'';position:fixed;inset:0;background:rgba(26,10,3,.45);pointer-events:none;z-index:0;}
 
-    /* ── Timer de reserva ────────────────────────────────── */
+    /* ── Timer fijo arriba ── */
     .timer-reserva{position:fixed;top:0;left:0;right:0;z-index:9000;background:var(--cafe);border-bottom:2px solid var(--oro);padding:10px 24px;display:flex;align-items:center;justify-content:center;gap:16px;}
-    .timer-reserva .timer-label{font-size:.85rem;color:var(--crema);opacity:.85;}
-    .timer-reserva .timer-countdown{font-size:1.3rem;font-weight:900;color:var(--oro);min-width:56px;text-align:center;font-family:'Courier New',monospace;}
-    .timer-reserva .timer-barra-wrap{flex:1;max-width:300px;background:rgba(255,255,255,.1);border-radius:20px;height:6px;overflow:hidden;}
-    .timer-reserva .timer-barra{height:100%;background:var(--oro);border-radius:20px;transition:width .5s linear;}
+    .timer-label{font-size:.85rem;color:var(--crema);opacity:.85;}
+    .timer-countdown{font-size:1.3rem;font-weight:900;color:var(--oro);min-width:56px;text-align:center;font-family:'Courier New',monospace;}
+    .timer-barra-wrap{flex:1;max-width:300px;background:rgba(255,255,255,.1);border-radius:20px;height:6px;overflow:hidden;}
+    .timer-barra{height:100%;background:var(--oro);border-radius:20px;transition:width .5s linear;}
     .timer-reserva.urgente .timer-countdown{color:var(--rojo);animation:pulseRed .8s infinite;}
     .timer-reserva.urgente .timer-barra{background:var(--rojo);}
     @keyframes pulseRed{0%,100%{opacity:1;}50%{opacity:.4;}}
 
-    /* ── Contenedor principal ────────────────────────────── */
-    .modal{position:relative;z-index:1;background:rgba(242,209,179,.18);border:2.5px solid var(--oro);border-radius:18px;padding:36px 40px 32px;width:820px;max-width:98vw;backdrop-filter:blur(6px);box-shadow:0 8px 40px rgba(0,0,0,.55);margin-top:60px;}
+    /* ── Overlay vencido ── */
+    .overlay-vencido{position:fixed;inset:0;z-index:9990;background:rgba(26,10,3,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;}
+    .overlay-vencido.visible{opacity:1;visibility:visible;}
+    .overlay-vencido .icon-vencido{font-size:4rem;}
+    .overlay-vencido p{color:var(--crema);font-size:1.1rem;font-weight:700;letter-spacing:1px;text-align:center;max-width:360px;line-height:1.6;}
+    .overlay-vencido a{background:var(--oro);color:var(--cafe);padding:12px 32px;border-radius:25px;font-weight:800;text-decoration:none;font-size:1rem;}
+
+    /* ── Contenedor ── */
+    .modal{position:relative;z-index:1;background:rgba(242,209,179,.18);border:2.5px solid var(--oro);border-radius:18px;padding:36px 40px 32px;width:860px;max-width:98vw;backdrop-filter:blur(6px);box-shadow:0 8px 40px rgba(0,0,0,.55);margin-top:68px;}
     .modal-header{text-align:center;margin-bottom:20px;}
     .titulo-placeholder{display:block;margin:0 auto 6px;max-width:360px;width:100%;}
     .modal-subtitulo{font-size:13px;color:var(--crema);letter-spacing:1px;opacity:.85;}
     .modal-body{display:flex;gap:28px;align-items:flex-start;}
     .col-izq{flex:1;display:flex;flex-direction:column;gap:14px;}
-    .seccion-label{font-size:13.5px;font-weight:700;color:var(--crema);margin-bottom:6px;}
+    .seccion-label{font-size:13.5px;font-weight:700;color:var(--crema);margin-bottom:4px;}
     .panel{background:var(--cafe);border-radius:10px;padding:16px 18px;}
 
     /* Formulario */
@@ -37,59 +44,88 @@
     .form-row{display:flex;gap:10px;}
     .form-row .form-group{flex:1;}
     label{font-size:12.5px;color:var(--crema);font-weight:700;}
-    input[type="text"],select{width:100%;padding:7px 10px;border-radius:6px;border:none;background:#fff;font-size:13px;color:#333;outline:none;}
-    input:focus,select:focus{box-shadow:0 0 0 2px var(--oro);}
+    input[type="text"],input[type="tel"]{width:100%;padding:7px 10px;border-radius:6px;border:1.5px solid transparent;background:#fff;font-size:13px;color:#333;outline:none;transition:border-color .2s,box-shadow .2s;}
+    input:focus{box-shadow:0 0 0 2px var(--oro);border-color:var(--oro);}
+    input.campo-error{border-color:var(--rojo)!important;box-shadow:0 0 0 2px rgba(231,76,60,.3)!important;}
 
-    /* Errores flash */
+    /* Flash errores */
     .flash-error{background:rgba(231,76,60,.15);border:1.5px solid var(--rojo);border-radius:8px;padding:10px 14px;font-size:.82rem;color:#fca5a5;margin-bottom:12px;}
 
     /* Resumen */
     .resumen-scroll{max-height:160px;overflow-y:auto;}
     .resumen-item{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:12.5px;color:var(--crema);}
     .resumen-item:last-child{border-bottom:none;}
-    .resumen-item .item-nombre{font-weight:700;}
-    .resumen-item .item-nota{font-size:10px;color:var(--oro);display:block;}
+    .item-nombre{font-weight:700;}
+    .item-nota{font-size:10px;color:var(--oro);display:block;}
     .resumen-total{display:flex;justify-content:space-between;padding:10px 0 0;border-top:1.5px solid rgba(255,255,255,.2);margin-top:6px;font-weight:700;font-size:14px;color:#fff;}
-    .resumen-total .total-val{color:var(--oro);font-size:16px;}
+    .total-val{color:var(--oro);font-size:16px;}
 
-    /* Domicilio */
-    .nota-domicilio{background:rgba(39,174,96,.12);border:1.5px solid var(--verde);border-radius:8px;padding:10px 14px;font-size:.8rem;color:#a7f3d0;margin-top:8px;display:flex;align-items:center;gap:8px;}
+    /* Nota domicilio */
+    .nota-domicilio{background:rgba(39,174,96,.12);border:1.5px solid var(--verde);border-radius:8px;padding:10px 14px;font-size:.8rem;color:#a7f3d0;display:flex;align-items:center;gap:8px;}
 
     /* Método de pago */
-    .metodo-pago-titulo{font-size:13.5px;font-weight:700;color:var(--crema);margin-bottom:8px;}
-    .radio-group{display:flex;flex-direction:column;gap:8px;margin-bottom:0;}
-    .radio-label{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--crema);cursor:pointer;font-weight:700;}
-    .radio-label input[type="radio"]{accent-color:var(--oro);width:16px;height:16px;}
+    .pago-opciones{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .pago-opcion{display:flex;align-items:center;gap:8px;border:1.5px solid rgba(255,255,255,.15);border-radius:8px;padding:9px 12px;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.04);}
+    .pago-opcion:has(input:checked){border-color:var(--oro);background:rgba(242,159,5,.1);}
+    .pago-opcion input[type="radio"]{accent-color:var(--oro);width:15px;height:15px;flex-shrink:0;}
+    .pago-nombre{font-size:13px;font-weight:700;color:var(--crema);}
+    .pago-desc{font-size:10.5px;color:rgba(242,209,179,.6);}
 
-    /* Ticket */
-    .col-der{width:380px;flex-shrink:0;}
-    .ticket{border-radius:12px;overflow:hidden;position:relative;background:transparent;}
-    .ticket-img{display:block;width:100%;height:auto;transform:scale(1.1);}
-    #ticketData{position:absolute;top:115px;left:95px;right:35px;color:#2b1a0e;font-family:'Courier New',monospace;font-size:9px;line-height:1.5;}
-    .ticket-fecha{text-align:left;font-size:10px;margin-bottom:20px;}
-    .ticket-item-row{margin-bottom:6px;}
-    .ticket-total-row{margin-top:55px;display:flex;justify-content:space-between;font-weight:bold;font-size:12px;}
+    /* Campos tarjeta */
+    .tarjeta-campos{background:rgba(0,0,0,.25);border:1px solid rgba(242,159,5,.2);border-radius:8px;padding:14px;margin-top:10px;display:none;}
+    .tarjeta-campos.visible{display:block;animation:aparecer .25s ease;}
+    @keyframes aparecer{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+    .tarjeta-header{font-size:11.5px;font-weight:700;color:var(--crema);opacity:.7;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+    .num-wrap{position:relative;}
+    .num-wrap input{padding-right:38px;font-family:'Courier New',monospace;letter-spacing:2px;}
+    .card-icon-abs{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:.9rem;}
+    .sim-aviso{font-size:10px;color:rgba(242,209,179,.45);margin-top:8px;text-align:center;font-style:italic;}
 
-    /* Botones */
-    .modal-footer{display:flex;justify-content:center;gap:18px;margin-top:24px;}
-    .btn{padding:10px 32px;border-radius:25px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:'Lato',sans-serif;transition:transform .15s,box-shadow .15s;}
+    /* ── TICKET ── */
+    .col-der{width:340px;flex-shrink:0;}
+    .ticket-wrap{position:relative;width:100%;display:inline-block;}
+    .ticket-img{display:block;width:100%;height:auto;}
+
+    /*
+     * El overlay se posiciona en % sobre la imagen.
+     * Ajusta TOP_PCT / BOTTOM_PCT / LEFT_PCT / RIGHT_PCT en el JS
+     * si el texto no cae exactamente dentro del área impresa del ticket.
+     */
+    .ticket-overlay{
+      position:absolute;
+      top:28%; left:13%; right:7%; bottom:10%;
+      display:flex; flex-direction:column; justify-content:space-between;
+      font-family:'Courier New',monospace;
+      color:#2b1a0e;
+      pointer-events:none;
+    }
+    .ticket-fecha-linea{font-size:8px;opacity:.7;margin-bottom:6px;}
+    .ticket-items-lista{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:2px;}
+    .ticket-fila{display:flex;justify-content:space-between;align-items:baseline;font-size:7.5px;line-height:1.45;}
+    .t-nombre{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:4px;}
+    .t-precio{font-weight:700;white-space:nowrap;flex-shrink:0;}
+    .ticket-sep{border:none;border-top:1px dashed rgba(43,26,14,.3);margin:4px 0;}
+    .ticket-total-fila{display:flex;justify-content:space-between;font-size:10px;font-weight:700;}
+
+    /* Pie de página */
+    .modal-footer{display:flex;justify-content:center;gap:16px;margin-top:22px;}
+    .btn{padding:10px 30px;border-radius:25px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:'Lato',sans-serif;transition:transform .15s,box-shadow .15s;}
     .btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.35);}
     .btn-confirmar{background:var(--crema);color:var(--cafe);}
-    .btn-cancelar{background:rgba(255,255,255,.15);border:1.5px solid var(--crema);color:var(--crema);}
+    .btn-volver{background:rgba(255,255,255,.12);border:1.5px solid rgba(242,209,179,.4);color:var(--crema);}
 
-    /* Overlay de vencimiento */
-    .overlay-vencido{position:fixed;inset:0;z-index:9990;background:rgba(26,10,3,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;}
-    .overlay-vencido.visible{opacity:1;visibility:visible;}
-    .overlay-vencido .icon-vencido{font-size:4rem;}
-    .overlay-vencido p{color:var(--crema);font-size:1.1rem;font-weight:700;letter-spacing:1px;text-align:center;max-width:360px;line-height:1.6;}
-    .overlay-vencido a{background:var(--oro);color:var(--cafe);padding:12px 32px;border-radius:25px;font-weight:800;text-decoration:none;font-size:1rem;}
-
-    @media(max-width:768px){.modal{padding:20px 16px;margin-top:70px;}.modal-body{flex-direction:column;}.col-der{display:none;}.form-row{flex-direction:column;}}
+    @media(max-width:768px){
+      .modal{padding:20px 16px;margin-top:72px;}
+      .modal-body{flex-direction:column;}
+      .col-der{display:none;}
+      .form-row{flex-direction:column;}
+      .pago-opciones{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
 
-  <!-- ── Timer de reserva fijo arriba ──────────────────────────────────────── -->
+  <!-- Timer fijo -->
   <div class="timer-reserva" id="timerReserva">
     <span class="timer-label">⏳ Tu pedido está apartado por:</span>
     <div class="timer-barra-wrap">
@@ -98,19 +134,18 @@
     <span class="timer-countdown" id="timerCountdown">5:00</span>
   </div>
 
-  <!-- ── Overlay de tiempo vencido ─────────────────────────────────────────── -->
+  <!-- Overlay vencido -->
   <div class="overlay-vencido" id="overlayVencido">
     <div class="icon-vencido">⏰</div>
     <p>El tiempo para completar tu pedido ha vencido.<br>Tu stock fue liberado automáticamente.</p>
     <a href="{{ url_for('ventas_online.menu') }}">Volver al menú</a>
   </div>
 
-  <!-- ── Formulario de checkout ─────────────────────────────────────────────── -->
   <div class="modal">
     <div class="modal-header">
       <img src="/static/FourOven/LetrasFourOvenPizza/LetrasRegistroVenta.png"
            alt="Confirmar pedido" class="titulo-placeholder">
-      <p class="modal-subtitulo">Completa tus datos — tendrás {{ segundos_totales // 60 }} minutos para hacerlo</p>
+      <p class="modal-subtitulo">Completa tus datos — tienes {{ segundos_totales // 60 }} minutos para hacerlo</p>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -120,9 +155,11 @@
     {% endwith %}
 
     <div class="modal-body">
+
+      <!-- ══ COLUMNA IZQUIERDA ══ -->
       <div class="col-izq">
 
-        <!-- Resumen del pedido -->
+        <!-- Resumen -->
         <p class="seccion-label">Tu pedido:</p>
         <div class="panel">
           <div class="resumen-scroll">
@@ -131,7 +168,7 @@
               <div>
                 <span class="item-nombre">{{ p.nombre }} ({{ p.tamano }}) x{{ p.cantidad }}</span>
                 {% if p.faltante > 0 %}
-                <span class="item-nota">🍳 {{ p.faltante }} se prepara(n) y se envía(n) a tu domicilio</span>
+                <span class="item-nota">🍳 {{ p.faltante }} se prepara(n) y se envía(n)</span>
                 {% endif %}
               </div>
               <span>${{ "%.2f"|format(p.subtotal) }}</span>
@@ -145,125 +182,301 @@
         </div>
 
         <div class="nota-domicilio">
-          🛵 <span>Tu pedido será entregado a domicilio. Por favor ingresa tu dirección completa.</span>
+          🛵 <span>Tu pedido será entregado a domicilio.</span>
         </div>
 
-        <!-- Formulario de datos -->
-        <p class="seccion-label">Tus datos de entrega:</p>
-        <form method="POST" action="{{ url_for('ventas_online.confirmar_pedido') }}" id="formCheckout">
+        <!-- ══ FORMULARIO PRINCIPAL ══ -->
+        <p class="seccion-label">Datos de entrega:</p>
+        <form method="POST" action="{{ url_for('ventas_online.confirmar_pedido') }}"
+              id="formCheckout" novalidate>
           <div class="panel">
+
             <div class="form-group">
               <label for="nombreCliente">Nombre completo *</label>
-              <input type="text" id="nombreCliente" name="nombreCliente" placeholder="Ej. Juan Pérez" maxlength="80" required>
+              <input type="text" id="nombreCliente" name="nombreCliente"
+                placeholder="Ej. Juan Pérez" maxlength="80">
             </div>
+
             <div class="form-row">
               <div class="form-group">
                 <label for="colonia">Colonia *</label>
-                <input type="text" id="colonia" name="colonia" maxlength="80" required>
+                <input type="text" id="colonia" name="colonia" maxlength="80">
               </div>
               <div class="form-group">
                 <label for="calle">Calle *</label>
-                <input type="text" id="calle" name="calle" maxlength="80" required>
+                <input type="text" id="calle" name="calle" maxlength="80">
               </div>
             </div>
+
             <div class="form-row">
               <div class="form-group">
                 <label for="numero">Número *</label>
-                <input type="text" id="numero" name="numero" maxlength="10" required>
+                <input type="text" id="numero" name="numero" maxlength="10">
               </div>
               <div class="form-group">
                 <label for="cp">Código Postal *</label>
-                <input type="text" id="cp" name="cp" maxlength="10" required>
+                <input type="text" id="cp" name="cp" maxlength="10" inputmode="numeric">
               </div>
             </div>
 
-            <div class="metodo-pago-titulo" style="margin-top:12px;">Método de pago:</div>
-            <div class="radio-group">
-              <label class="radio-label">
-                <input type="radio" name="metodoPago" value="Efectivo" checked>
-                💵 Efectivo al recibir
-              </label>
-              <label class="radio-label">
-                <input type="radio" name="metodoPago" value="Tarjeta">
-                💳 Tarjeta al recibir
-              </label>
+            <!-- Método de pago -->
+            <div style="margin-top:14px;">
+              <label style="display:block;margin-bottom:8px;">Método de pago:</label>
+              <div class="pago-opciones">
+                <label class="pago-opcion">
+                  <input type="radio" name="metodoPago" value="Efectivo" id="pagoEfectivo" checked>
+                  <div>
+                    <div class="pago-nombre">💵 Efectivo</div>
+                    <div class="pago-desc">Pago al recibir</div>
+                  </div>
+                </label>
+                <label class="pago-opcion">
+                  <input type="radio" name="metodoPago" value="Tarjeta" id="pagoTarjeta">
+                  <div>
+                    <div class="pago-nombre">💳 Tarjeta</div>
+                    <div class="pago-desc">Débito o crédito</div>
+                  </div>
+                </label>
+              </div>
+
+              <!-- Campos tarjeta — simulación, no se procesan en servidor -->
+              <div class="tarjeta-campos" id="camposTarjeta">
+                <div class="tarjeta-header">🔒 Datos de tarjeta</div>
+
+                <div class="form-group">
+                  <label for="nombreTarjeta">Nombre en la tarjeta *</label>
+                  <input type="text" id="nombreTarjeta" name="nombreTarjeta"
+                    placeholder="Ej. JUAN PEREZ" maxlength="60"
+                    style="text-transform:uppercase;">
+                </div>
+
+                <div class="form-group">
+                  <label for="numTarjeta">Número de tarjeta *</label>
+                  <div class="num-wrap">
+                    <input type="text" id="numTarjeta" name="numTarjeta"
+                      placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric">
+                    <span class="card-icon-abs">💳</span>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="expiracion">Vencimiento *</label>
+                    <input type="text" id="expiracion" name="expiracion"
+                      placeholder="MM/AA" maxlength="5" inputmode="numeric">
+                  </div>
+                  <div class="form-group">
+                    <label for="cvv">CVV *</label>
+                    <input type="text" id="cvv" name="cvv"
+                      placeholder="123" maxlength="4" inputmode="numeric">
+                  </div>
+                </div>
+
+                <p class="sim-aviso">🔐 Tus datos de pago están protegidos</p>
+              </div>
             </div>
-          </div>
 
-          <div class="modal-footer" style="padding:0;">
-            <form method="POST" action="{{ url_for('ventas_online.volver_menu') }}" style="display:inline;">
-              <button type="submit" class="btn btn-cancelar">← Volver al menú</button>
-            </form>
-            <button type="submit" form="formCheckout" class="btn btn-confirmar">
-              Confirmar pedido 🛵
-            </button>
-          </div>
-        </form>
-      </div>
+          </div><!-- /panel -->
+        </form><!-- /formCheckout -->
 
-      <!-- Ticket visual -->
+        <!--
+          FOOTER CON DOS FORMS SEPARADOS:
+          - El form "volver" es independiente y no dispara la validación del checkout
+          - El botón confirmar referencia formCheckout con form="formCheckout"
+          Esto evita el HTML inválido de forms anidados.
+        -->
+        <div class="modal-footer">
+          <form method="POST" action="{{ url_for('ventas_online.volver_menu') }}">
+            <button type="submit" class="btn btn-volver">← Volver al menú</button>
+          </form>
+          <button type="submit" form="formCheckout" class="btn btn-confirmar" id="btnConfirmar">
+            Confirmar pedido 🛵
+          </button>
+        </div>
+
+      </div><!-- /col-izq -->
+
+      <!-- ══ TICKET VISUAL ══ -->
       <div class="col-der">
-        <div class="ticket">
-          <img src="/static/FourOven/TicketFourOvenPizza/TicketFourOven.png" alt="Ticket" class="ticket-img">
-          <div id="ticketData">
-            <div class="ticket-fecha" id="ticketFecha"></div>
-            <div id="ticketItems">
-              {% for p in productos_carrito %}
-              <div class="ticket-item-row">{{ p.cantidad }}x {{ p.nombre }} ({{ p.tamano }}) - ${{ "%.2f"|format(p.subtotal) }}</div>
-              {% endfor %}
+        <div class="ticket-wrap" id="ticketWrap">
+          <img src="/static/FourOven/TicketFourOvenPizza/TicketFourOven.png"
+               alt="Ticket" class="ticket-img" id="ticketImg">
+          <!--
+            El overlay se posiciona encima de la imagen usando CSS absoluto en %.
+            Si el texto no cae exactamente en el área correcta,
+            ajusta las variables TOP_PCT, BOTTOM_PCT, LEFT_PCT, RIGHT_PCT en el <script>.
+          -->
+          <div class="ticket-overlay" id="ticketOverlay">
+            <div>
+              <div class="ticket-fecha-linea" id="ticketFecha"></div>
+              <div class="ticket-items-lista">
+                {% for p in productos_carrito %}
+                <div class="ticket-fila">
+                  <span class="t-nombre">{{ p.cantidad }}x {{ p.nombre }} ({{ p.tamano }})</span>
+                  <span class="t-precio">${{ "%.2f"|format(p.subtotal) }}</span>
+                </div>
+                {% endfor %}
+              </div>
             </div>
-            <div class="ticket-total-row">
-              <span></span>
-              <span>${{ "%.2f"|format(total) }}</span>
+            <div>
+              <hr class="ticket-sep">
+              <div class="ticket-total-fila">
+                <span>Total</span>
+                <span>${{ "%.2f"|format(total) }}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <script>
-    /* ── Datos del servidor ── */
-    const SEGUNDOS_TOTALES  = {{ segundos_totales | int }};
-    let   segundosRestantes = {{ segundos_restantes | int }};
+    </div><!-- /modal-body -->
+  </div><!-- /modal -->
 
-    const barraEl     = document.getElementById('timerBarra');
-    const countdownEl = document.getElementById('timerCountdown');
-    const timerEl     = document.getElementById('timerReserva');
-    const overlayEl   = document.getElementById('overlayVencido');
+<script>
+/* ════════ TIMER ════════ */
+const SEGUNDOS_TOTALES  = {{ segundos_totales | int }};
+let   segundosRestantes = {{ segundos_restantes | int }};
 
-    function pad(n) { return n.toString().padStart(2, '0'); }
+const barraEl     = document.getElementById('timerBarra');
+const countdownEl = document.getElementById('timerCountdown');
+const timerEl     = document.getElementById('timerReserva');
+const overlayEl   = document.getElementById('overlayVencido');
 
-    function actualizarTimer() {
-      if (segundosRestantes <= 0) {
-        clearInterval(timerInterval);
-        countdownEl.textContent = '0:00';
-        barraEl.style.width = '0%';
-        overlayEl.classList.add('visible');
-        return;
-      }
-      const m = Math.floor(segundosRestantes / 60);
-      const s = segundosRestantes % 60;
-      countdownEl.textContent = `${m}:${pad(s)}`;
-      barraEl.style.width = ((segundosRestantes / SEGUNDOS_TOTALES) * 100) + '%';
-      if (segundosRestantes <= 60) {
-        timerEl.classList.add('urgente');
-      }
-      segundosRestantes--;
+function pad(n){ return n.toString().padStart(2,'0'); }
+
+function actualizarTimer(){
+  if(segundosRestantes <= 0){
+    clearInterval(timerInterval);
+    countdownEl.textContent = '0:00';
+    barraEl.style.width = '0%';
+    overlayEl.classList.add('visible');
+    return;
+  }
+  const m = Math.floor(segundosRestantes / 60);
+  const s = segundosRestantes % 60;
+  countdownEl.textContent = `${m}:${pad(s)}`;
+  barraEl.style.width = ((segundosRestantes / SEGUNDOS_TOTALES) * 100) + '%';
+  if(segundosRestantes <= 60) timerEl.classList.add('urgente');
+  segundosRestantes--;
+}
+actualizarTimer();
+const timerInterval = setInterval(actualizarTimer, 1000);
+
+/* ════════ FECHA EN TICKET ════════ */
+(function(){
+  const now = new Date();
+  const p   = n => n.toString().padStart(2,'0');
+  let h = now.getHours(), ampm = h >= 12 ? 'p.m.' : 'a.m.';
+  h = h % 12 || 12;
+  document.getElementById('ticketFecha').textContent =
+    `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}  ${h}:${p(now.getMinutes())} ${ampm}`;
+})();
+
+/* ════════ TICKET OVERLAY — posicionamiento dinámico ════════
+ *
+ * Estos cuatro valores controlan dónde aparece el texto
+ * sobre la imagen del ticket. Ajústalos si necesitas mover el bloque:
+ *
+ *   TOP_PCT    → % desde el borde superior de la imagen
+ *   BOTTOM_PCT → % desde el borde inferior
+ *   LEFT_PCT   → % desde el borde izquierdo
+ *   RIGHT_PCT  → % desde el borde derecho
+ */
+const TOP_PCT    = 28;
+const BOTTOM_PCT = 10;
+const LEFT_PCT   = 13;
+const RIGHT_PCT  = 7;
+
+function ajustarOverlay(){
+  const overlay = document.getElementById('ticketOverlay');
+  if(!overlay) return;
+  overlay.style.top    = TOP_PCT    + '%';
+  overlay.style.bottom = BOTTOM_PCT + '%';
+  overlay.style.left   = LEFT_PCT   + '%';
+  overlay.style.right  = RIGHT_PCT  + '%';
+}
+const ticketImg = document.getElementById('ticketImg');
+if(ticketImg && ticketImg.complete) ajustarOverlay();
+else if(ticketImg) ticketImg.addEventListener('load', ajustarOverlay);
+window.addEventListener('resize', ajustarOverlay);
+
+/* ════════ TOGGLE TARJETA ════════ */
+const radioEfectivo = document.getElementById('pagoEfectivo');
+const radioTarjeta  = document.getElementById('pagoTarjeta');
+const camposTarjeta = document.getElementById('camposTarjeta');
+
+function toggleTarjeta(){
+  const es = radioTarjeta.checked;
+  camposTarjeta.classList.toggle('visible', es);
+  camposTarjeta.querySelectorAll('input').forEach(inp => { inp.disabled = !es; });
+}
+radioEfectivo.addEventListener('change', toggleTarjeta);
+radioTarjeta.addEventListener('change',  toggleTarjeta);
+toggleTarjeta(); // estado inicial
+
+/* ── Formato número de tarjeta ── */
+document.getElementById('numTarjeta').addEventListener('input', function(){
+  let v = this.value.replace(/\D/g,'').substring(0,16);
+  this.value = v.replace(/(.{4})/g,'$1 ').trim();
+});
+
+/* ── Formato vencimiento MM/AA ── */
+document.getElementById('expiracion').addEventListener('input', function(){
+  let v = this.value.replace(/\D/g,'').substring(0,4);
+  if(v.length >= 3) v = v.substring(0,2) + '/' + v.substring(2);
+  this.value = v;
+});
+
+/* ── Solo dígitos en CVV ── */
+document.getElementById('cvv').addEventListener('input', function(){
+  this.value = this.value.replace(/\D/g,'').substring(0,4);
+});
+
+/* ════════ VALIDACIÓN al confirmar ════════ */
+document.getElementById('formCheckout').addEventListener('submit', function(e){
+  let hayError = false;
+
+  /* Campos base siempre requeridos */
+  ['nombreCliente','colonia','calle','numero','cp'].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el.value.trim()){ el.classList.add('campo-error'); hayError = true; }
+    else                 { el.classList.remove('campo-error'); }
+  });
+
+  /* Campos de tarjeta — solo si está seleccionada */
+  if(radioTarjeta.checked){
+    ['nombreTarjeta','numTarjeta','expiracion','cvv'].forEach(id => {
+      const el = document.getElementById(id);
+      if(!el || !el.value.trim()){ if(el) el.classList.add('campo-error'); hayError = true; }
+      else                        { el.classList.remove('campo-error'); }
+    });
+
+    /* Número completo (16 dígitos) */
+    const numLimpio = document.getElementById('numTarjeta').value.replace(/\s/g,'');
+    if(numLimpio.length < 16){
+      document.getElementById('numTarjeta').classList.add('campo-error'); hayError = true;
     }
+    /* Expiración formato MM/AA */
+    if(!/^\d{2}\/\d{2}$/.test(document.getElementById('expiracion').value)){
+      document.getElementById('expiracion').classList.add('campo-error'); hayError = true;
+    }
+    /* CVV mínimo 3 dígitos */
+    if(document.getElementById('cvv').value.length < 3){
+      document.getElementById('cvv').classList.add('campo-error'); hayError = true;
+    }
+  }
 
-    actualizarTimer();
-    const timerInterval = setInterval(actualizarTimer, 1000);
+  if(hayError){
+    e.preventDefault();
+    const primero = document.querySelector('.campo-error');
+    if(primero) primero.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+});
 
-    /* Fecha en ticket */
-    (function() {
-      const now  = new Date();
-      const pad  = n => n.toString().padStart(2,'0');
-      let h = now.getHours(), ampm = h >= 12 ? 'p.m.' : 'a.m.';
-      h = h % 12 || 12;
-      document.getElementById('ticketFecha').textContent =
-        `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${h}:${pad(now.getMinutes())} ${ampm}`;
-    })();
-  </script>
+/* Limpiar borde de error al escribir */
+document.querySelectorAll('input').forEach(inp => {
+  inp.addEventListener('input', () => inp.classList.remove('campo-error'));
+});
+</script>
 </body>
 </html>

@@ -4,171 +4,486 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Four Oven - Menú</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --brown-dark: #2b1a0e;
-      --brown-mid:  #4a2c14;
-      --brown-light:#7a4a22;
-      --gold:       #c9843a;
-      --gold-light: #e8a44a;
-      --cream:      #f5e6c8;
-      --red:        #c0392b;
-      --panel-bg:   #fff;
-      --text-dark:  #1a0f05;
+      --cafe-oscuro:  #2b1a0e;
+      --cafe-medio:   #4a2c14;
+      --cafe-claro:   #7a4a22;
+      --oro:          #f29f05;
+      --oro-claro:    #f5b942;
+      --oro-oscuro:   #c47d00;
+      --crema:        #f5e6c8;
+      --crema-oscura: #e8d0a0;
+      --rojo:         #c0392b;
+      --blanco:       #ffffff;
+      --panel-sombra: rgba(0,0,0,0.45);
     }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Georgia',serif;background:var(--brown-dark);min-height:100vh;display:flex;align-items:stretch;}
 
-    .back-home-btn{position:fixed;top:20px;left:20px;z-index:1000;background:var(--gold);color:var(--brown-dark);padding:10px 20px;border-radius:30px;text-decoration:none;font-weight:bold;display:flex;align-items:center;gap:8px;transition:all .3s;box-shadow:0 4px 12px rgba(0,0,0,.2);font-size:14px;}
-    .back-home-btn:hover{background:var(--gold-light);transform:translateY(-2px);color:var(--brown-dark);}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Alertas de error */
-    .alertas-carrito{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:2000;width:90%;max-width:500px;}
-    .alerta-item{background:#fff3cd;border:1.5px solid #f0a500;border-radius:10px;padding:12px 16px;margin-bottom:8px;font-size:.85rem;color:#5a3800;box-shadow:0 4px 14px rgba(0,0,0,.15);}
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--cafe-oscuro);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+    }
 
-    .menu-bg{background-image:url('/static/FourOven/FondosUtilizados/FondoPedidoPizza.png');background-size:cover;background-position:center;background-color:var(--brown-mid);flex:1;display:flex;flex-direction:column;padding:0;position:relative;overflow:hidden;}
-    .menu-bg::before{content:'';position:absolute;inset:0;background:rgba(30,14,4,.55);pointer-events:none;z-index:0;}
+    /* ── Botón volver ── */
+    .btn-volver-inicio {
+      position: fixed; top: 18px; left: 18px; z-index: 1000;
+      background: var(--oro); color: var(--cafe-oscuro);
+      padding: 9px 20px; border-radius: 30px;
+      text-decoration: none; font-weight: 900; font-size: 13px;
+      display: flex; align-items: center; gap: 7px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+      transition: all .25s;
+    }
+    .btn-volver-inicio:hover {
+      background: var(--oro-claro); transform: translateY(-2px);
+      color: var(--cafe-oscuro);
+    }
 
-    .menu-header{position:relative;z-index:1;text-align:center;padding:0;margin-top:20px;}
-    .menu-header img{max-height:200px;transform:translateY(-20px);}
-    .menu-subtitle{font-family:'Lato',sans-serif;color:#fff;margin-top:-60px;font-size:1.1rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,.5);}
+    /* ── Alertas ── */
+    .alertas-zona {
+      position: fixed; top: 64px; left: 50%; transform: translateX(-50%);
+      z-index: 2000; width: 92%; max-width: 480px;
+    }
+    .alerta-item {
+      background: #fffbeb; border: 1.5px solid var(--oro);
+      border-radius: 10px; padding: 11px 15px; margin-bottom: 7px;
+      font-size: .82rem; color: #5a3800;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+      animation: slideDown .3s ease;
+    }
+    @keyframes slideDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
 
-    .filter-container{position:relative;z-index:1;display:flex;justify-content:center;gap:15px;margin:20px 20px 0;flex-wrap:wrap;}
-    .filter-btn{background:rgba(0,0,0,.6);backdrop-filter:blur(8px);border:2px solid var(--gold);color:#fff;padding:10px 28px;border-radius:40px;font-weight:bold;font-size:1rem;cursor:pointer;transition:all .3s;letter-spacing:1px;}
-    .filter-btn:hover,.filter-btn.active{background:var(--gold);color:var(--brown-dark);border-color:transparent;}
+    /* ══════════════════════════════════════
+       ZONA DE MENÚ
+    ══════════════════════════════════════ */
+    .menu-zona {
+      flex: 1;
+      background-image: url('/static/FourOven/FondosUtilizados/FondoPedidoPizza.png');
+      background-size: cover; background-position: center;
+      background-color: var(--cafe-medio);
+      display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
+    }
+    .menu-zona::before {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(26, 10, 3, .62); pointer-events: none; z-index: 0;
+    }
 
-    .pizza-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:18px 28px 28px;flex:1;overflow-y:auto;height:calc(100vh - 280px);}
-    .pizza-card{display:flex;flex-direction:column;align-items:center;text-align:center;background:rgba(0,0,0,.18);border-radius:14px;padding:10px 8px;transition:transform .2s;}
-    .pizza-card:hover{transform:translateY(-4px);}
-    .pizza-card h3{color:#fff;font-size:1rem;font-weight:bold;margin-bottom:6px;text-shadow:1px 1px 4px rgba(0,0,0,.8);}
-    .pizza-img-wrap{width:200px;height:200px;border-radius:10px;overflow:hidden;margin-bottom:6px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.1);}
-    .pizza-img-wrap img{width:100%;height:100%;object-fit:contain;}
-    .pizza-img-wrap .no-img{font-size:4rem;opacity:.4;}
-    .pizza-card .ingredients{color:rgb(244,243,242);font-size:.7rem;line-height:1.3;margin-bottom:10px;opacity:.9;text-shadow:1px 1px 2px rgba(0,0,0,.5);}
-    .badge-produccion{display:inline-block;background:rgba(242,159,5,.85);color:#1a0f05;font-size:.62rem;font-weight:700;border-radius:20px;padding:2px 8px;margin-bottom:4px;}
+    /* ── Header ── */
+    .menu-header {
+      position: relative; z-index: 1;
+      text-align: center; padding-top: 18px;
+    }
+    .menu-header img { max-height: 190px; transform: translateY(-18px); }
+    .menu-subtitulo {
+      font-family: 'Lato', sans-serif;
+      color: var(--crema); font-size: 1rem; font-weight: 300;
+      letter-spacing: 3px; text-transform: uppercase;
+      margin-top: -54px; text-shadow: 0 2px 8px rgba(0,0,0,.6);
+    }
 
-    /* Botón agregar via form */
-    .btn-add-form{display:inline-flex;align-items:center;gap:8px;background:none;border:none;padding:4px 0;color:#fff;font-size:1.2rem;font-weight:bold;margin-top:4px;cursor:pointer;text-shadow:1px 1px 2px rgba(0,0,0,.5);}
-    .btn-add-form .icon-plus{width:26px;height:26px;object-fit:contain;filter:brightness(0) invert(1);}
-    .btn-add-form:hover{transform:scale(1.08);opacity:.85;}
-    .no-products{grid-column:1/-1;text-align:center;color:#fff;font-size:1.2rem;padding:40px;background:rgba(0,0,0,.5);border-radius:20px;}
+    /* ── Filtros ── */
+    .filtros {
+      position: relative; z-index: 1;
+      display: flex; justify-content: center; gap: 10px;
+      margin: 18px 20px 0; flex-wrap: wrap;
+    }
+    .filtro-btn {
+      background: rgba(0,0,0,.5); backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(242,159,5,.5);
+      color: rgba(255,255,255,.75);
+      padding: 8px 24px; border-radius: 40px;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700; font-size: .85rem;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      cursor: pointer; transition: all .2s;
+    }
+    .filtro-btn:hover {
+      border-color: var(--oro); color: #fff;
+    }
+    .filtro-btn.activo {
+      background: var(--oro); border-color: var(--oro);
+      color: var(--cafe-oscuro); box-shadow: 0 4px 16px rgba(242,159,5,.4);
+    }
 
-    /* Panel de orden */
-    .order-panel{width:300px;min-width:260px;background:var(--panel-bg);display:flex;flex-direction:column;padding:24px 18px 20px;box-shadow:-4px 0 24px rgba(0,0,0,.35);position:relative;z-index:2;overflow-y:auto;}
-    .miorden-subtitle{font-family:'Lato',sans-serif;font-weight:300;font-size:1.4rem;color:var(--text-dark);letter-spacing:1px;border-top:1.5px solid #e0d0b0;border-bottom:1.5px solid #e0d0b0;padding:8px 0;margin-bottom:12px;}
-    .panel-logo{text-align:center;margin-bottom:18px;}
-    .panel-logo img{max-height:70px;width:auto;}
-    .order-items{flex:1;}
-    .order-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;border-bottom:1px solid #f0e8d8;padding-bottom:12px;}
-    .order-item-img{width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid var(--gold);flex-shrink:0;background:#f5e6c8;display:flex;align-items:center;justify-content:center;}
-    .order-item-img img{width:100%;height:100%;object-fit:cover;}
-    .order-item-img .no-img-sm{font-size:1.6rem;opacity:.4;}
-    .order-item-info{flex:1;}
-    .order-item-info .name{font-weight:bold;font-size:.85rem;color:var(--text-dark);}
-    .order-item-info .price{font-size:.78rem;color:#666;}
-    .order-item-info .prod-note{font-size:.68rem;color:#c9843a;font-weight:600;}
-    .order-item-controls{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
-    .ctrl-row{display:flex;align-items:center;gap:4px;}
-    .qty-btn{background:none;border:1.5px solid #ccc;border-radius:50%;width:22px;height:22px;font-size:.9rem;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--brown-mid);padding:0;line-height:1;}
-    .qty-btn:hover{background:#f0e0c0;}
-    .qty-value{font-size:.82rem;font-weight:bold;min-width:16px;text-align:center;color:var(--text-dark);}
-    .delete-btn{background:none;border:none;color:var(--red);font-size:.85rem;cursor:pointer;padding:2px;}
+    /* ── Grid de pizzas ── */
+    .pizzas-grid {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 16px 24px 28px;
+      flex: 1;
+      overflow-y: auto;
+      height: calc(100vh - 270px);
+    }
+    .pizzas-grid::-webkit-scrollbar { width: 5px; }
+    .pizzas-grid::-webkit-scrollbar-track { background: rgba(255,255,255,.05); }
+    .pizzas-grid::-webkit-scrollbar-thumb { background: var(--oro-oscuro); border-radius: 4px; }
 
-    .order-total{display:flex;justify-content:space-between;align-items:center;border-top:2px solid #e0d0b0;padding-top:14px;margin-top:8px;}
-    .total-amount{font-size:1.4rem;font-weight:bold;color:var(--text-dark);}
-    .nota-produccion{background:#fff8e1;border:1px solid #f29f05;border-radius:8px;padding:8px 10px;font-size:.72rem;color:#7a4a00;margin-top:8px;}
-    .btn-order{display:block;width:100%;background:var(--brown-dark);color:var(--cream);font-size:1.1rem;font-weight:bold;letter-spacing:2px;border:none;border-radius:8px;padding:14px;margin-top:16px;cursor:pointer;transition:background .2s;text-align:center;text-decoration:none;}
-    .btn-order:hover{background:var(--brown-light);color:var(--cream);}
-    .btn-order:disabled,.btn-order.disabled{background:#999;cursor:not-allowed;pointer-events:none;}
-    .btn-limpiar{display:block;width:100%;background:transparent;border:1.5px solid #ccc;color:#888;font-size:.8rem;border-radius:6px;padding:6px;margin-top:8px;cursor:pointer;}
-    .btn-limpiar:hover{border-color:var(--red);color:var(--red);}
-    .order-empty{color:#aaa;text-align:center;font-style:italic;font-size:.85rem;margin-top:20px;}
+    /* ── Card de pizza ── */
+    .pizza-card {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(242,159,5,.2);
+      border-radius: 16px;
+      padding: 14px 10px 12px;
+      transition: all .25s;
+      position: relative; overflow: hidden;
+    }
+    .pizza-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(242,159,5,.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .pizza-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(242,159,5,.6);
+      background: rgba(255,255,255,.11);
+      box-shadow: 0 12px 32px rgba(0,0,0,.4), 0 0 0 1px rgba(242,159,5,.25);
+    }
 
-    /* Filtro JS puro */
-    .pizza-card[data-tamano] { display: flex; }
-    .pizza-card.hidden { display: none !important; }
+    .pizza-nombre {
+      font-family: 'Cinzel', serif;
+      color: #fff; font-size: .82rem; font-weight: 600;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 6px rgba(0,0,0,.7);
+    }
+    .pizza-tamano-badge {
+      display: inline-block;
+      background: rgba(242,159,5,.2);
+      border: 1px solid rgba(242,159,5,.4);
+      color: var(--oro-claro);
+      font-size: .6rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 20px;
+      margin-bottom: 8px;
+    }
 
-    @media(max-width:1024px) and (min-width:769px){.pizza-grid{grid-template-columns:repeat(3,1fr);}.pizza-img-wrap{width:160px;height:160px;}}
-    @media(max-width:768px){body{flex-direction:column;}.order-panel{width:100%;}.pizza-grid{grid-template-columns:repeat(2,1fr);height:auto;max-height:55vh;}.filter-container{margin:60px 12px 0;}.pizza-img-wrap{width:110px;height:110px;}}
+    .pizza-img-wrap {
+      width: 148px; height: 148px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-bottom: 9px;
+      border: 2.5px solid rgba(242,159,5,.35);
+      box-shadow: 0 0 20px rgba(242,159,5,.12), inset 0 0 20px rgba(0,0,0,.2);
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,.15);
+      transition: border-color .25s;
+    }
+    .pizza-card:hover .pizza-img-wrap {
+      border-color: rgba(242,159,5,.7);
+    }
+    .pizza-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .35s;
+    }
+    .pizza-card:hover .pizza-img-wrap img { transform: scale(1.06); }
+    .pizza-img-wrap .emoji-placeholder { font-size: 3.5rem; opacity: .35; }
+
+    .pizza-ingredientes {
+      color: rgba(245,230,200,.75);
+      font-size: .65rem; line-height: 1.45;
+      margin-bottom: 10px;
+      text-shadow: 0 1px 3px rgba(0,0,0,.5);
+    }
+
+    .badge-prep {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(242,159,5,.18);
+      border: 1px solid rgba(242,159,5,.45);
+      color: var(--oro-claro);
+      font-size: .6rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 20px;
+      margin-bottom: 7px;
+    }
+
+    .precio-label {
+      color: var(--oro);
+      font-family: 'Cinzel', serif;
+      font-size: 1rem; font-weight: 700;
+      margin-bottom: 10px;
+      text-shadow: 0 0 12px rgba(242,159,5,.3);
+    }
+
+    /* Botón agregar */
+    .btn-agregar {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      background: linear-gradient(135deg, var(--cafe-oscuro), var(--cafe-medio));
+      border: 1.5px solid var(--oro);
+      color: var(--oro);
+      padding: 7px 18px; border-radius: 30px;
+      font-weight: 900; font-size: .78rem;
+      letter-spacing: .5px; text-transform: uppercase;
+      cursor: pointer; transition: all .2s;
+      width: 100%;
+    }
+    .btn-agregar:hover {
+      background: var(--oro); color: var(--cafe-oscuro);
+      box-shadow: 0 4px 16px rgba(242,159,5,.45);
+      transform: translateY(-1px);
+    }
+    .btn-agregar .icono-add {
+      width: 16px; height: 16px;
+      object-fit: contain;
+      filter: brightness(0) saturate(100%) invert(67%) sepia(94%) saturate(500%) hue-rotate(8deg);
+      transition: filter .2s;
+    }
+    .btn-agregar:hover .icono-add {
+      filter: brightness(0) saturate(100%) invert(10%) sepia(30%) saturate(800%) hue-rotate(10deg);
+    }
+
+    .sin-productos {
+      grid-column: 1/-1; text-align: center;
+      color: rgba(255,255,255,.5); font-size: 1.1rem;
+      padding: 48px; background: rgba(0,0,0,.3); border-radius: 16px;
+    }
+
+    /* ocultar filtradas */
+    .pizza-card.oculta { display: none !important; }
+
+    /* ══════════════════════════════════════
+       PANEL CARRITO
+    ══════════════════════════════════════ */
+    .panel-carrito {
+      width: 290px; min-width: 260px;
+      background: linear-gradient(180deg, #fdf6ec 0%, #f5e6c8 100%);
+      display: flex; flex-direction: column;
+      padding: 22px 16px 18px;
+      box-shadow: -6px 0 28px rgba(0,0,0,.4);
+      position: relative; z-index: 2;
+      overflow-y: auto;
+    }
+    .panel-carrito::-webkit-scrollbar { width: 4px; }
+    .panel-carrito::-webkit-scrollbar-thumb { background: var(--crema-oscura); border-radius: 4px; }
+
+    .panel-logo { text-align: center; margin-bottom: 16px; }
+    .panel-logo img { max-height: 64px; }
+
+    .panel-titulo {
+      font-family: 'Cinzel', serif;
+      color: var(--cafe-oscuro); font-size: 1rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      text-align: center;
+      border-top: 1.5px solid var(--crema-oscura);
+      border-bottom: 1.5px solid var(--crema-oscura);
+      padding: 8px 0; margin-bottom: 14px;
+    }
+
+    /* Items del carrito */
+    .carrito-items { flex: 1; }
+    .carrito-vacio {
+      color: var(--cafe-claro); opacity: .6;
+      text-align: center; font-style: italic;
+      font-size: .82rem; margin-top: 24px;
+    }
+
+    .carrito-item {
+      display: flex; align-items: flex-start; gap: 9px;
+      margin-bottom: 12px;
+      padding-bottom: 11px;
+      border-bottom: 1px solid rgba(122,74,34,.12);
+      animation: fadeIn .2s ease;
+    }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+    .item-img {
+      width: 48px; height: 48px; border-radius: 50%;
+      overflow: hidden; flex-shrink: 0;
+      border: 2px solid var(--oro);
+      background: var(--crema);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .item-img img { width: 100%; height: 100%; object-fit: cover; }
+    .item-img .emoji-sm { font-size: 1.4rem; opacity: .5; }
+
+    .item-info { flex: 1; min-width: 0; }
+    .item-nombre {
+      font-weight: 700; font-size: .78rem;
+      color: var(--cafe-oscuro); line-height: 1.3;
+    }
+    .item-tamano { font-size: .65rem; color: var(--cafe-claro); }
+    .item-precio { font-size: .72rem; color: var(--cafe-claro); margin-top: 1px; }
+    .item-prep-nota {
+      font-size: .6rem; color: var(--oro-oscuro);
+      font-weight: 700; margin-top: 2px;
+    }
+
+    .item-controles { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .ctrl-fila { display: flex; align-items: center; gap: 4px; }
+    .qty-btn {
+      background: none; border: 1.5px solid var(--crema-oscura);
+      border-radius: 50%; width: 20px; height: 20px;
+      font-size: .82rem; font-weight: 900;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--cafe-medio); padding: 0; line-height: 1;
+      transition: all .15s;
+    }
+    .qty-btn:hover { background: var(--crema-oscura); border-color: var(--cafe-claro); }
+    .qty-valor {
+      font-size: .78rem; font-weight: 900;
+      min-width: 16px; text-align: center;
+      color: var(--cafe-oscuro);
+    }
+    .btn-borrar {
+      background: none; border: none;
+      color: var(--rojo); font-size: .75rem;
+      cursor: pointer; padding: 1px; opacity: .7;
+      transition: opacity .15s;
+    }
+    .btn-borrar:hover { opacity: 1; }
+
+    /* Nota producción */
+    .nota-prod {
+      background: #fffbeb; border: 1px solid var(--oro);
+      border-radius: 8px; padding: 8px 10px;
+      font-size: .68rem; color: #6b4a00;
+      margin-top: 8px; line-height: 1.5;
+    }
+
+    /* Total */
+    .carrito-total {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 2px solid var(--crema-oscura);
+      padding-top: 12px; margin-top: 8px;
+    }
+    .total-etiqueta { font-size: .85rem; font-weight: 700; color: var(--cafe-oscuro); }
+    .total-monto {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem; font-weight: 700;
+      color: var(--cafe-oscuro);
+    }
+
+    /* Botones del panel */
+    .btn-ordenar {
+      display: block; width: 100%;
+      background: linear-gradient(135deg, var(--cafe-oscuro), var(--cafe-medio));
+      color: var(--crema); font-family: 'Cinzel', serif;
+      font-size: .88rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      border: none; border-radius: 10px;
+      padding: 13px; margin-top: 14px;
+      cursor: pointer; transition: all .2s;
+      text-align: center; text-decoration: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,.2);
+    }
+    .btn-ordenar:hover {
+      background: linear-gradient(135deg, var(--cafe-medio), var(--cafe-claro));
+      color: var(--crema);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0,0,0,.3);
+    }
+    .btn-vaciar {
+      display: block; width: 100%;
+      background: transparent; border: 1px solid rgba(192,57,43,.3);
+      color: rgba(192,57,43,.7);
+      font-size: .72rem; border-radius: 6px;
+      padding: 6px; margin-top: 8px; cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-vaciar:hover { border-color: var(--rojo); color: var(--rojo); }
+
+    /* ── Responsive ── */
+    @media (max-width: 1200px) and (min-width: 769px) {
+      .pizzas-grid { grid-template-columns: repeat(3, 1fr); }
+      .pizza-img-wrap { width: 120px; height: 120px; }
+    }
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .panel-carrito { width: 100%; }
+      .pizzas-grid { grid-template-columns: repeat(2, 1fr); height: auto; max-height: 55vh; }
+      .filtros { margin-top: 56px; }
+      .pizza-img-wrap { width: 100px; height: 100px; }
+    }
   </style>
 </head>
 <body>
 
-  <a href="{{ url_for('inicio') }}" class="back-home-btn">
-    <i class="fas fa-arrow-left"></i> Volver al inicio
+  <a href="{{ url_for('inicio') }}" class="btn-volver-inicio">
+    &#8592; Inicio
   </a>
 
-  <!-- Alertas de validación -->
   {% if errores %}
-  <div class="alertas-carrito" id="alertasCarrito">
+  <div class="alertas-zona" id="alertasZona">
     {% for err in errores %}
     <div class="alerta-item">⚠️ {{ err|safe }}</div>
     {% endfor %}
   </div>
   <script>
     setTimeout(() => {
-      const el = document.getElementById('alertasCarrito');
-      if (el) el.style.display = 'none';
+      const el = document.getElementById('alertasZona');
+      if (el) { el.style.opacity = '0'; el.style.transition = 'opacity .5s'; setTimeout(() => el.remove(), 500); }
     }, 5000);
   </script>
   {% endif %}
 
-  <!-- ═══ MENÚ ═══════════════════════════════════════════════════════════════ -->
-  <div class="menu-bg">
+  <!-- ══ ZONA MENÚ ══════════════════════════════════════════════════════════ -->
+  <div class="menu-zona">
     <div class="menu-header">
       <img src="/static/FourOven/LetrasFourOvenPizza/LetraMenú.png" alt="Menú">
-      <h2 class="menu-subtitle">Nuestras deliciosas pizzas</h2>
+      <p class="menu-subtitulo">Nuestras pizzas artesanales</p>
     </div>
 
-    <div class="filter-container">
-      <button class="filter-btn active" data-tamano="Todos">Todos</button>
-      <button class="filter-btn" data-tamano="Chica">Chica</button>
-      <button class="filter-btn" data-tamano="Mediana">Mediana</button>
-      <button class="filter-btn" data-tamano="Grande">Grande</button>
+    <div class="filtros">
+      <button class="filtro-btn activo" data-tamano="Todos">Todos</button>
+      <button class="filtro-btn" data-tamano="Chica">Chica</button>
+      <button class="filtro-btn" data-tamano="Mediana">Mediana</button>
+      <button class="filtro-btn" data-tamano="Grande">Grande</button>
     </div>
 
-    <div class="pizza-grid" id="pizzaGrid">
+    <div class="pizzas-grid" id="pizzasGrid">
       {% set ingredientes_map = {
-        "Pepperoni":   "C/ Queso mozzarella y rodajas de pepperoni",
-        "Hawaiana":    "C/ Queso mozzarella, jamón y piña natural",
-        "3 Carnes":    "C/ Queso mozzarella, jamón, pepperoni y tocino",
-        "4 Carnes":    "C/ Queso mozzarella, jamón, pepperoni, salami y chorizo",
-        "Mexicana":    "C/ Queso mozzarella, chorizo, cebolla y jalapeño",
-        "Fogatta":     "C/ Queso mozzarella, jamón, pepperoni, cebolla, piña y morrón",
-        "4 Quesos":    "C/ Queso mozzarella, asadero, monarca y gouda",
-        "Suprema":     "C/ Queso mozzarella, pepperoni, morrón, cebolla, champiñones y aceitunas",
-        "Española":    "C/ Queso mozzarella, queso asadero y aceitunas",
-        "Vegetariana": "C/ Queso mozzarella, aceitunas, cebolla, morrón, champiñón y piña"
+        "Pepperoni":   "Queso mozzarella y rodajas de pepperoni",
+        "Hawaiana":    "Queso mozzarella, jamón y piña natural",
+        "3 Carnes":    "Queso mozzarella, jamón, pepperoni y tocino",
+        "4 Carnes":    "Queso mozzarella, jamón, pepperoni, salami y chorizo",
+        "Mexicana":    "Queso mozzarella, chorizo, cebolla y jalapeño",
+        "Fogatta":     "Queso mozzarella, jamón, pepperoni, cebolla, piña y morrón",
+        "4 Quesos":    "Queso mozzarella, asadero, monarca y gouda",
+        "Suprema":     "Queso mozzarella, pepperoni, morrón, cebolla, champiñones y aceitunas",
+        "Española":    "Queso mozzarella, queso asadero y aceitunas",
+        "Vegetariana": "Queso mozzarella, aceitunas, cebolla, morrón, champiñón y piña"
       } %}
 
       {% if not productos %}
-        <div class="no-products">🍕 No hay pizzas disponibles en este momento</div>
+        <div class="sin-productos">🍕 No hay pizzas disponibles en este momento</div>
       {% else %}
         {% for prod in productos %}
           {% set det = detalle_stock.get(prod.idProducto, {}) %}
           {% set faltante = det.get('faltante', 0) %}
           <div class="pizza-card" data-tamano="{{ prod.tamano }}">
-            <h3>{{ prod.nombre }} ({{ prod.tamano }})</h3>
+            <div class="pizza-nombre">{{ prod.nombre }}</div>
+            <div class="pizza-tamano-badge">{{ prod.tamano }}</div>
+
             <div class="pizza-img-wrap">
               {% if prod.imagen_b64 %}
                 <img src="{{ prod.imagen_b64 }}" alt="{{ prod.nombre }}">
               {% else %}
-                <span class="no-img">🍕</span>
+                <span class="emoji-placeholder">🍕</span>
               {% endif %}
             </div>
-            <p class="ingredients">{{ ingredientes_map.get(prod.nombre, 'Deliciosa pizza artesanal') }}</p>
+
+            <p class="pizza-ingredientes">{{ ingredientes_map.get(prod.nombre, 'Deliciosa pizza artesanal') }}</p>
+
             {% if faltante > 0 %}
-              <span class="badge-produccion">🍳 Se prepara al momento</span>
+              <span class="badge-prep">🍳 Se prepara al momento</span>
             {% endif %}
-            <form method="POST" action="{{ url_for('ventas_online.agregar_al_carrito') }}">
+
+            <div class="precio-label">${{ "%.2f"|format(prod.precio) }}</div>
+
+            <form method="POST" action="{{ url_for('ventas_online.agregar_al_carrito') }}" style="width:100%;">
               <input type="hidden" name="idProducto" value="{{ prod.idProducto }}">
               <input type="hidden" name="cantidad" value="1">
-              <button type="submit" class="btn-add-form">
-                <img src="/static/FourOven/Iconos/icono-agregar.png" class="icon-plus" alt="+">
-                ${{ "%.2f"|format(prod.precio) }}
+              <button type="submit" class="btn-agregar">
+                <img src="/static/FourOven/Iconos/icono-agregar.png" class="icono-add" alt="+">
+                Agregar
               </button>
             </form>
           </div>
@@ -177,57 +492,53 @@
     </div>
   </div>
 
-  <!-- ═══ PANEL DE ORDEN ═══════════════════════════════════════════════════ -->
-  <div class="order-panel">
+  <!-- ══ PANEL CARRITO ══════════════════════════════════════════════════════ -->
+  <div class="panel-carrito">
     <div class="panel-logo">
       <img src="/static/FourOven/LogoFourOvenPizzas/LogoPedidoPizza.png" alt="Four Oven">
     </div>
-    <h2 class="miorden-subtitle">Mi orden</h2>
+    <h2 class="panel-titulo">Mi Orden</h2>
 
-    <div class="order-items">
-      {% set carrito_dict = {} %}
-      {% for item in carrito %}
-        {% set _ = carrito_dict.update({item.idProducto: item.cantidad}) %}
-      {% endfor %}
-
+    <div class="carrito-items">
       {% if not carrito %}
-        <p class="order-empty">Agrega pizzas a tu orden</p>
+        <p class="carrito-vacio">Agrega pizzas para comenzar</p>
       {% else %}
-        {% set total_orden = namespace(valor=0) %}
-        {% set hay_produccion = namespace(val=false) %}
+        {% set total_ns = namespace(val=0) %}
+        {% set hay_prod = namespace(val=false) %}
 
         {% for item in carrito %}
           {% set prod = productos | selectattr('idProducto', 'equalto', item.idProducto) | first | default(none) %}
           {% if prod %}
             {% set subtotal = prod.precio * item.cantidad %}
-            {% set total_orden.valor = total_orden.valor + subtotal %}
+            {% set total_ns.val = total_ns.val + subtotal %}
             {% set det = detalle_stock.get(item.idProducto, {}) %}
-            {% set faltante = det.get('faltante', 0) %}
-            {% if faltante > 0 %}{% set hay_produccion.val = true %}{% endif %}
+            {% set falt = det.get('faltante', 0) %}
+            {% if falt > 0 %}{% set hay_prod.val = true %}{% endif %}
 
-            <div class="order-item">
-              <div class="order-item-img">
+            <div class="carrito-item">
+              <div class="item-img">
                 {% if prod.imagen_b64 %}
                   <img src="{{ prod.imagen_b64 }}" alt="{{ prod.nombre }}">
                 {% else %}
-                  <span class="no-img-sm">🍕</span>
+                  <span class="emoji-sm">🍕</span>
                 {% endif %}
               </div>
-              <div class="order-item-info">
-                <div class="name">{{ prod.nombre }} ({{ prod.tamano }})</div>
-                <div class="price">${{ "%.2f"|format(prod.precio) }}</div>
-                {% if faltante > 0 %}
-                  <div class="prod-note">🍳 {{ faltante }} se prepara(n)</div>
+              <div class="item-info">
+                <div class="item-nombre">{{ prod.nombre }}</div>
+                <div class="item-tamano">{{ prod.tamano }}</div>
+                <div class="item-precio">${{ "%.2f"|format(prod.precio) }}</div>
+                {% if falt > 0 %}
+                  <div class="item-prep-nota">🍳 {{ falt }} a preparar</div>
                 {% endif %}
               </div>
-              <div class="order-item-controls">
-                <div class="ctrl-row">
+              <div class="item-controles">
+                <div class="ctrl-fila">
                   <form method="POST" action="{{ url_for('ventas_online.actualizar_carrito') }}" style="display:inline;">
                     <input type="hidden" name="idProducto" value="{{ item.idProducto }}">
                     <input type="hidden" name="accion" value="disminuir">
                     <button type="submit" class="qty-btn">−</button>
                   </form>
-                  <span class="qty-value">x{{ item.cantidad }}</span>
+                  <span class="qty-valor">{{ item.cantidad }}</span>
                   <form method="POST" action="{{ url_for('ventas_online.actualizar_carrito') }}" style="display:inline;">
                     <input type="hidden" name="idProducto" value="{{ item.idProducto }}">
                     <input type="hidden" name="accion" value="aumentar">
@@ -237,53 +548,46 @@
                 <form method="POST" action="{{ url_for('ventas_online.actualizar_carrito') }}" style="display:inline;">
                   <input type="hidden" name="idProducto" value="{{ item.idProducto }}">
                   <input type="hidden" name="accion" value="eliminar">
-                  <button type="submit" class="delete-btn"><i class="fa fa-trash"></i></button>
+                  <button type="submit" class="btn-borrar">🗑</button>
                 </form>
               </div>
             </div>
           {% endif %}
         {% endfor %}
 
-        {% if hay_produccion.val %}
-        <div class="nota-produccion">
-          🍳 Algunos productos se prepararán y enviarán a tu domicilio.
+        {% if hay_prod.val %}
+        <div class="nota-prod">
+          🍳 Algunos productos se prepararán especialmente para ti.
         </div>
         {% endif %}
 
-        <div class="order-total">
-          <span>Total:</span>
-          <span class="total-amount">${{ "%.2f"|format(total_orden.valor) }}</span>
+        <div class="carrito-total">
+          <span class="total-etiqueta">Total</span>
+          <span class="total-monto">${{ "%.2f"|format(total_ns.val) }}</span>
         </div>
 
-        <a href="{{ url_for('ventas_online.checkout') }}" class="btn-order">
-          ORDENAR
+        <a href="{{ url_for('ventas_online.checkout') }}" class="btn-ordenar">
+          Ordenar →
         </a>
 
         <form method="POST" action="{{ url_for('ventas_online.limpiar_carrito') }}">
-          <button type="submit" class="btn-limpiar">🗑 Vaciar carrito</button>
+          <button type="submit" class="btn-vaciar">🗑 Vaciar carrito</button>
         </form>
       {% endif %}
     </div>
   </div>
 
   <script>
-    /* Filtro de tamaño — solo JS de presentación, sin llamadas al servidor */
-    document.querySelectorAll('.filter-btn').forEach(btn => {
+    document.querySelectorAll('.filtro-btn').forEach(btn => {
       btn.addEventListener('click', function () {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
+        document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('activo'));
+        this.classList.add('activo');
         const tamano = this.dataset.tamano;
         document.querySelectorAll('.pizza-card[data-tamano]').forEach(card => {
-          if (tamano === 'Todos' || card.dataset.tamano === tamano) {
-            card.classList.remove('hidden');
-          } else {
-            card.classList.add('hidden');
-          }
+          card.classList.toggle('oculta', tamano !== 'Todos' && card.dataset.tamano !== tamano);
         });
       });
     });
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
