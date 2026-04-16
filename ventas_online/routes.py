@@ -426,17 +426,19 @@ def limpiar_carrito():
 
 @ventas_online.route("/checkout")
 def checkout():
-    """
-    Página de checkout / datos del cliente.
-
-    Al entrar aquí:
-      1. Se valida el carrito completo.
-      2. Se descuenta el stock de forma TEMPORAL (estado 'Reservado_temp').
-      3. Se inicia un timer de 5 min; si vence sin confirmación, se libera el stock.
-      4. Se muestra un countdown de 5 min al usuario.
-    """
     # Si ya había una reserva temporal activa, liberarla antes de crear una nueva
     id_temp_anterior = session.get("reserva_temp_id")
+    expira_iso       = session.get("reserva_temp_expira")
+
+    if id_temp_anterior and expira_iso:
+        try:
+            delta = (datetime.fromisoformat(expira_iso) - datetime.now()).total_seconds()
+            if delta > 0:
+                # Ya hay reserva vigente, no crear otra
+                return redirect(url_for("ventas_online.checkout_datos"))
+        except Exception:
+            pass
+    
     if id_temp_anterior:
         _liberar_reserva_temporal(int(id_temp_anterior))
         session.pop("reserva_temp_id",     None)
@@ -590,7 +592,13 @@ def checkout():
             "faltante":   faltante,
         })
 
-    segundos_restantes = RESERVA_MINUTOS * 60
+    expira = datetime.now() + timedelta(minutes=RESERVA_MINUTOS)
+    session["reserva_temp_id"]     = id_venta_temp
+    session["reserva_temp_expira"] = expira.isoformat()
+
+    # Calcular segundos reales restantes desde ya
+    delta = (expira - datetime.now()).total_seconds()
+    segundos_restantes = max(0, int(delta))
 
     return render_template(
         "registrar/registrarVenta.html",
