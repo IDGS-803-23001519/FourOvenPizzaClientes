@@ -35,6 +35,19 @@ ventas_online = Blueprint("ventas_online", __name__, template_folder="templates"
 RESERVA_MINUTOS   = 5
 USUARIO_ONLINE_ID = 3   # usuario "Ventas"
 
+HORA_APERTURA = 9   # 9:00 AM
+HORA_CIERRE   = 21  # 9:00 PM
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Helper: horario de negocio
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _negocio_abierto():
+    """Retorna True si la hora actual está dentro del horario de atención (9am–9pm)."""
+    hora_actual = datetime.now().hour
+    return HORA_APERTURA <= hora_actual < HORA_CIERRE
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Helpers internos
@@ -320,18 +333,34 @@ def menu():
 
     errores_flash = session.pop("carrito_errores", [])
 
+    # Pasar estado del negocio al template
+    negocio_abierto = _negocio_abierto()
+
     return render_template(
         "ordenar/ordenarAhora.html",
         productos=productos,
         carrito=carrito,
         detalle_stock=detalle_stock,
         errores=errores_flash,
+        negocio_abierto=negocio_abierto,
+        hora_apertura=HORA_APERTURA,
+        hora_cierre=HORA_CIERRE,
     )
 
 
 @ventas_online.route("/agregar", methods=["POST"])
 def agregar_al_carrito():
     """Agrega un producto al carrito (server-side) y valida disponibilidad."""
+
+    # ── Validar horario de atención ───────────────────────────────────────────
+    if not _negocio_abierto():
+        flash(
+            f"Lo sentimos, estamos cerrados. Nuestro horario de atención es de "
+            f"{HORA_APERTURA}:00 a.m. a {HORA_CIERRE - 12}:00 p.m. ¡Te esperamos!",
+            "warning"
+        )
+        return redirect(url_for("ventas_online.menu"))
+
     id_producto = int(request.form.get("idProducto", 0))
     cantidad    = int(request.form.get("cantidad", 1))
 
@@ -380,6 +409,16 @@ def agregar_al_carrito():
 @ventas_online.route("/actualizar", methods=["POST"])
 def actualizar_carrito():
     """Actualiza cantidad o elimina un item del carrito."""
+
+    # ── Validar horario de atención ───────────────────────────────────────────
+    if not _negocio_abierto():
+        flash(
+            f"Lo sentimos, estamos cerrados. Nuestro horario de atención es de "
+            f"{HORA_APERTURA}:00 a.m. a {HORA_CIERRE - 12}:00 p.m. ¡Te esperamos!",
+            "warning"
+        )
+        return redirect(url_for("ventas_online.menu"))
+
     id_producto = int(request.form.get("idProducto", 0))
     accion      = request.form.get("accion", "")  # "aumentar", "disminuir", "eliminar"
 
@@ -426,6 +465,16 @@ def limpiar_carrito():
 
 @ventas_online.route("/checkout")
 def checkout():
+
+    # ── Validar horario de atención ───────────────────────────────────────────
+    if not _negocio_abierto():
+        flash(
+            f"Lo sentimos, estamos cerrados. Nuestro horario de atención es de "
+            f"{HORA_APERTURA}:00 a.m. a {HORA_CIERRE - 12}:00 p.m. ¡Te esperamos!",
+            "warning"
+        )
+        return redirect(url_for("ventas_online.menu"))
+
     # Si ya había una reserva temporal activa, liberarla antes de crear una nueva
     id_temp_anterior = session.get("reserva_temp_id")
     expira_iso       = session.get("reserva_temp_expira")
